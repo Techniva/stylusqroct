@@ -836,7 +836,7 @@ const QRCodePreview: React.FC<QRCodePreviewProps> = ({
               // You may need to adjust this logic if you have the uniqueCode elsewhere
               sessionStorage.setItem('dbc_prefill', JSON.stringify({
                 vcard,
-                uniqueCode: window.lastCreatedBusinesscardUniqueCode || uniqueCode
+                uniqueCode: uniqueCode
               }));
               window.location.href = '/digital-business-cards/create';
             }}
