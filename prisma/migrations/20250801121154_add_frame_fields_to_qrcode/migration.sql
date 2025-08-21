@@ -1,0 +1,6 @@
+-- AlterTable
+ALTER TABLE `QRCode` ADD COLUMN `frameColor` VARCHAR(191) NULL,
+    ADD COLUMN `frameStyle` VARCHAR(191) NULL,
+    ADD COLUMN `frameText` VARCHAR(191) NULL,
+    ADD COLUMN `frameTextColor` VARCHAR(191) NULL,
+    ADD COLUMN `frameTextSize` VARCHAR(191) NULL;

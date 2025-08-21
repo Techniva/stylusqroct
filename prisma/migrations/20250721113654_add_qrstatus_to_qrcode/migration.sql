@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `QRCode` ADD COLUMN `qrStatus` BOOLEAN NOT NULL DEFAULT true;

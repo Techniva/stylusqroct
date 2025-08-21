@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `QRCode` ADD COLUMN `dataType` VARCHAR(191) NULL;

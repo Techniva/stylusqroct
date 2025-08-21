@@ -1,0 +1,239 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                        Int                @id @default(autoincrement())
+  fullName                  String
+  email                     String             @unique
+  password                  String
+  createdAt                 DateTime           @default(now())
+  updatedAt                 DateTime           @updatedAt
+  qrCodes                   QRCode[]
+  resetToken                String? // For password reset
+  resetTokenExpiry          DateTime? // Expiry for reset token
+  location                  String?
+  company                   String?
+  comp_position             String?
+  usr_phone                 String?
+  twoFactorSecret           String?
+  twoFactorEnabled          Boolean            @default(false)
+  twoFactorRecoveryCodes    String? // Stored as a JSON string
+  emailNotificationsEnabled Boolean            @default(true)
+  smsNotificationsEnabled   Boolean            @default(false)
+  pushNotificationsEnabled  Boolean            @default(true)
+  feed_rating               Int?
+  feed_type                 String?
+  feed_msg                  String?
+  profileUpdateLogs         ProfileUpdateLog[]
+
+  // Subscription related fields
+  subscriptionId    Int?
+  subscription      Subscription? @relation(fields: [subscriptionId], references: [id])
+  subscriptionStart DateTime?
+  subscriptionEnd   DateTime?
+  isActive          Boolean       @default(true)
+  qrCodesUsed       Int           @default(0)
+  qrCodesLimit      Int           @default(5) // Free plan limit
+
+  // Payment relations
+  payments Payment[]
+
+  // Admin actions tracking
+  adminActions         AdminAction[]
+  digitalBusinessCards DigitalBusinessCard[]
+}
+
+model AdminUser {
+  id        Int       @id @default(autoincrement())
+  username  String    @unique
+  email     String    @unique
+  password  String
+  fullName  String
+  role      String    @default("admin") // admin, super_admin
+  isActive  Boolean   @default(true)
+  lastLogin DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  // Admin actions
+  actions AdminAction[]
+
+  @@index([username])
+  @@index([email])
+}
+
+model AdminAction {
+  id          Int      @id @default(autoincrement())
+  adminId     Int
+  userId      Int? // User affected by the action
+  actionType  String // "plan_update", "user_suspension", "subscription_change", etc.
+  description String
+  oldValue    String? // JSON string of old values
+  newValue    String? // JSON string of new values
+  createdAt   DateTime @default(now())
+
+  // Relations
+  admin AdminUser @relation(fields: [adminId], references: [id], onDelete: Cascade)
+  user  User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([adminId])
+  @@index([userId])
+  @@index([actionType])
+  @@index([createdAt])
+}
+
+model QRCode {
+  id              Int           @id @default(autoincrement())
+  qrData          Json // Structured data for different QR code types
+  lastLink        String? // Previous URL before update (for backward compatibility)
+  uniqueCode      String        @unique @default(cuid()) // Unique code for dynamic QR
+  cornerShape     String        @default("square")
+  eyeShape        String        @default("square")
+  qrShape         String        @default("square")
+  foregroundColor String        @default("#000000")
+  backgroundColor String        @default("#FFFFFF")
+  dotColor        String? // Color for dot styles
+  cornerColor     String? // Color for corner shapes
+  eyeColor        String? // Color for eye styles
+  updateCount     Int           @default(0)
+  qrCodeImagePath String? // Path or URL to the saved QR code image
+  logoPath        String? // Path to the logo image in the QR code directory
+  // Frame settings
+  frameStyle      String? // 'none', 'simple', 'double', 'rounded', 'dashed', 'dotted', 'shadow', 'gradient'
+  frameText       String? // Text to display in the frame
+  frameTextSize   String? // 'small', 'medium', 'large', 'xl'
+  frameColor      String? // Color of the frame
+  frameTextColor  String? // Color of the frame text
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  userId          Int?
+  user            User?         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  qrStatus        Boolean       @default(true) // true = active, false = deactive
+  scanLogs        ScanLog[]
+  download_count  Int           @default(0)
+  downloadLogs    DownloadLog[]
+
+  @@index([userId], map: "QRCode_userId_fkey")
+  @@index([uniqueCode], map: "QRCode_uniqueCode_idx")
+}
+
+model ScanLog {
+  scanqr_id    Int      @id @default(autoincrement())
+  qr_code_id   Int
+  scanned_at   DateTime @default(now())
+  ip_address   String?  @db.VarChar(45)
+  country      String?  @db.VarChar(100)
+  region       String?  @db.VarChar(100)
+  city         String?  @db.VarChar(100)
+  isp          String?  @db.VarChar(100)
+  latitude     Decimal? @db.Decimal(10, 7)
+  longitude    Decimal? @db.Decimal(10, 7)
+  device_type  String?  @db.VarChar(50)
+  os_name      String?  @db.VarChar(100)
+  browser_name String?  @db.VarChar(100)
+
+  QRCode QRCode @relation(fields: [qr_code_id], references: [id], onDelete: Cascade)
+}
+
+model DownloadLog {
+  id            Int      @id @default(autoincrement())
+  qr_code_id    Int
+  downloaded_at DateTime @default(now())
+  QRCode        QRCode   @relation(fields: [qr_code_id], references: [id], onDelete: Cascade)
+}
+
+model ProfileUpdateLog {
+  id         Int      @id @default(autoincrement())
+  user_id    Int
+  updated_at DateTime @default(now())
+  User       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+}
+
+model Subscription {
+  id           Int      @id @default(autoincrement())
+  name         String // "Free", "Basic", "Pro"
+  description  String
+  priceMonthly Int // Price in INR (paise for precision)
+  priceYearly  Int // Price in INR (paise for precision)
+  qrCodesLimit Int // -1 for unlimited
+  features     String // JSON string of features
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relations
+  users    User[]
+  payments Payment[]
+
+  @@index([name])
+}
+
+model PricingPlan {
+  id           Int      @id @default(autoincrement())
+  name         String // "Free", "Basic", "Pro"
+  description  String
+  priceMonthly Int // Price in INR (paise for precision)
+  priceYearly  Int // Price in INR (paise for precision)
+  qrCodesLimit Int // -1 for unlimited
+  features     String // JSON string of features
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([name])
+}
+
+model Payment {
+  id             Int      @id @default(autoincrement())
+  userId         Int
+  subscriptionId Int
+  amount         Int // Amount in INR (paise for precision)
+  currency       String   @default("INR")
+  status         String // "pending", "completed", "failed", "refunded"
+  paymentMethod  String? // "razorpay", "stripe", etc.
+  transactionId  String? // External payment gateway transaction ID
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  // Relations
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subscription Subscription @relation(fields: [subscriptionId], references: [id])
+
+  @@index([userId])
+  @@index([status])
+  @@index([transactionId])
+}
+
+model DigitalBusinessCard {
+  id             Int      @id @default(autoincrement())
+  userId         Int
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name           String
+  title          String?
+  company        String?
+  phone          String?
+  email          String?
+  address        String?
+  website        String?
+  about          String?
+  pronoun        String?
+  accreditations String?
+  theme          String?
+  primaryColor   String?
+  secondaryColor String?
+  fieldIcons     Json?
+  activeFields   Json?
+  fieldData      Json?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([userId])
+  @@index([createdAt])
+}

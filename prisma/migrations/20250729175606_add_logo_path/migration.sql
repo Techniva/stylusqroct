@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `QRCode` ADD COLUMN `logoPath` VARCHAR(191) NULL;

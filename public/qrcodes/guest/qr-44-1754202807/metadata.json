@@ -1,0 +1,18 @@
+{
+  "id": 44,
+  "userId": null,
+  "uniqueCode": "cmdvb24v6000bs5myq2ftrzi1",
+  "createdAt": "2025-08-03T06:33:27.344Z",
+  "imagePath": "/qrcodes/guest/qr-44-1754202807/qr.png",
+  "subfolderName": "qr-44-1754202807",
+  "qrData": {
+    "type": "website",
+    "data": {
+      "url": "https://www.prayaasindia.org/"
+    },
+    "metadata": {
+      "createdFrom": "web-interface",
+      "originalDataType": "website"
+    }
+  }
+}
