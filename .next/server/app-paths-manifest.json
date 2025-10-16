@@ -1,9 +1,0 @@
-{
-  "/api/visiting-card/stickers/route": "app/api/visiting-card/stickers/route.js",
-  "/_not-found/page": "app/_not-found/page.js",
-  "/digital-business-cards/create/page": "app/digital-business-cards/create/page.js",
-  "/dashboard/myqrcodes/page": "app/dashboard/myqrcodes/page.js",
-  "/digital-business-cards/create/my-cards/page": "app/digital-business-cards/create/my-cards/page.js",
-  "/dashboard/page": "app/dashboard/page.js",
-  "/visiting-card/vc/create/page": "app/visiting-card/vc/create/page.js"
-}
