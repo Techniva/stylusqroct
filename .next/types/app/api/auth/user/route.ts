@@ -1,4 +1,4 @@
-// File: /Users/sunilkumarprajapati/Downloads/python/stylusqr1/src/app/api/auth/user/route.ts
+// File: /Users/sunilkumarprajapati/Downloads/python/stylusqr/src/app/api/auth/user/route.ts
 import * as entry from '../../../../../../src/app/api/auth/user/route.js'
 import type { NextRequest } from 'next/server.js'
 

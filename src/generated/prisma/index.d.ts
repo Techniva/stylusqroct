@@ -5703,6 +5703,7 @@ export namespace Prisma {
     user?: boolean | QRCode$userArgs<ExtArgs>
     scanLogs?: boolean | QRCode$scanLogsArgs<ExtArgs>
     downloadLogs?: boolean | QRCode$downloadLogsArgs<ExtArgs>
+    digitalBusinessCard?: boolean | QRCode$digitalBusinessCardArgs<ExtArgs>
     _count?: boolean | QRCodeCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["qRCode"]>
 
@@ -5741,6 +5742,7 @@ export namespace Prisma {
     user?: boolean | QRCode$userArgs<ExtArgs>
     scanLogs?: boolean | QRCode$scanLogsArgs<ExtArgs>
     downloadLogs?: boolean | QRCode$downloadLogsArgs<ExtArgs>
+    digitalBusinessCard?: boolean | QRCode$digitalBusinessCardArgs<ExtArgs>
     _count?: boolean | QRCodeCountOutputTypeDefaultArgs<ExtArgs>
   }
 
@@ -5750,6 +5752,7 @@ export namespace Prisma {
       user: Prisma.$UserPayload<ExtArgs> | null
       scanLogs: Prisma.$ScanLogPayload<ExtArgs>[]
       downloadLogs: Prisma.$DownloadLogPayload<ExtArgs>[]
+      digitalBusinessCard: Prisma.$DigitalBusinessCardPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
@@ -6120,6 +6123,7 @@ export namespace Prisma {
     user<T extends QRCode$userArgs<ExtArgs> = {}>(args?: Subset<T, QRCode$userArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     scanLogs<T extends QRCode$scanLogsArgs<ExtArgs> = {}>(args?: Subset<T, QRCode$scanLogsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ScanLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     downloadLogs<T extends QRCode$downloadLogsArgs<ExtArgs> = {}>(args?: Subset<T, QRCode$downloadLogsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DownloadLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    digitalBusinessCard<T extends QRCode$digitalBusinessCardArgs<ExtArgs> = {}>(args?: Subset<T, QRCode$digitalBusinessCardArgs<ExtArgs>>): Prisma__DigitalBusinessCardClient<$Result.GetResult<Prisma.$DigitalBusinessCardPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -6581,6 +6585,25 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: DownloadLogScalarFieldEnum | DownloadLogScalarFieldEnum[]
+  }
+
+  /**
+   * QRCode.digitalBusinessCard
+   */
+  export type QRCode$digitalBusinessCardArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DigitalBusinessCard
+     */
+    select?: DigitalBusinessCardSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DigitalBusinessCard
+     */
+    omit?: DigitalBusinessCardOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DigitalBusinessCardInclude<ExtArgs> | null
+    where?: DigitalBusinessCardWhereInput
   }
 
   /**
@@ -12681,6 +12704,9 @@ export namespace Prisma {
   export type DigitalBusinessCardMinAggregateOutputType = {
     id: number | null
     userId: number | null
+    uniqueCode: string | null
+    template: string | null
+    qrCodePath: string | null
     name: string | null
     title: string | null
     company: string | null
@@ -12691,9 +12717,11 @@ export namespace Prisma {
     about: string | null
     pronoun: string | null
     accreditations: string | null
+    profileUrl: string | null
     theme: string | null
     primaryColor: string | null
     secondaryColor: string | null
+    published: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -12701,6 +12729,9 @@ export namespace Prisma {
   export type DigitalBusinessCardMaxAggregateOutputType = {
     id: number | null
     userId: number | null
+    uniqueCode: string | null
+    template: string | null
+    qrCodePath: string | null
     name: string | null
     title: string | null
     company: string | null
@@ -12711,9 +12742,11 @@ export namespace Prisma {
     about: string | null
     pronoun: string | null
     accreditations: string | null
+    profileUrl: string | null
     theme: string | null
     primaryColor: string | null
     secondaryColor: string | null
+    published: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -12721,6 +12754,9 @@ export namespace Prisma {
   export type DigitalBusinessCardCountAggregateOutputType = {
     id: number
     userId: number
+    uniqueCode: number
+    template: number
+    qrCodePath: number
     name: number
     title: number
     company: number
@@ -12731,12 +12767,13 @@ export namespace Prisma {
     about: number
     pronoun: number
     accreditations: number
+    profileUrl: number
     theme: number
     primaryColor: number
     secondaryColor: number
-    fieldIcons: number
     activeFields: number
     fieldData: number
+    published: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -12756,6 +12793,9 @@ export namespace Prisma {
   export type DigitalBusinessCardMinAggregateInputType = {
     id?: true
     userId?: true
+    uniqueCode?: true
+    template?: true
+    qrCodePath?: true
     name?: true
     title?: true
     company?: true
@@ -12766,9 +12806,11 @@ export namespace Prisma {
     about?: true
     pronoun?: true
     accreditations?: true
+    profileUrl?: true
     theme?: true
     primaryColor?: true
     secondaryColor?: true
+    published?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -12776,6 +12818,9 @@ export namespace Prisma {
   export type DigitalBusinessCardMaxAggregateInputType = {
     id?: true
     userId?: true
+    uniqueCode?: true
+    template?: true
+    qrCodePath?: true
     name?: true
     title?: true
     company?: true
@@ -12786,9 +12831,11 @@ export namespace Prisma {
     about?: true
     pronoun?: true
     accreditations?: true
+    profileUrl?: true
     theme?: true
     primaryColor?: true
     secondaryColor?: true
+    published?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -12796,6 +12843,9 @@ export namespace Prisma {
   export type DigitalBusinessCardCountAggregateInputType = {
     id?: true
     userId?: true
+    uniqueCode?: true
+    template?: true
+    qrCodePath?: true
     name?: true
     title?: true
     company?: true
@@ -12806,12 +12856,13 @@ export namespace Prisma {
     about?: true
     pronoun?: true
     accreditations?: true
+    profileUrl?: true
     theme?: true
     primaryColor?: true
     secondaryColor?: true
-    fieldIcons?: true
     activeFields?: true
     fieldData?: true
+    published?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -12906,6 +12957,9 @@ export namespace Prisma {
   export type DigitalBusinessCardGroupByOutputType = {
     id: number
     userId: number
+    uniqueCode: string
+    template: string
+    qrCodePath: string
     name: string
     title: string | null
     company: string | null
@@ -12916,12 +12970,13 @@ export namespace Prisma {
     about: string | null
     pronoun: string | null
     accreditations: string | null
+    profileUrl: string | null
     theme: string | null
     primaryColor: string | null
     secondaryColor: string | null
-    fieldIcons: JsonValue | null
     activeFields: JsonValue | null
     fieldData: JsonValue | null
+    published: boolean
     createdAt: Date
     updatedAt: Date
     _count: DigitalBusinessCardCountAggregateOutputType | null
@@ -12948,6 +13003,9 @@ export namespace Prisma {
   export type DigitalBusinessCardSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     userId?: boolean
+    uniqueCode?: boolean
+    template?: boolean
+    qrCodePath?: boolean
     name?: boolean
     title?: boolean
     company?: boolean
@@ -12958,15 +13016,17 @@ export namespace Prisma {
     about?: boolean
     pronoun?: boolean
     accreditations?: boolean
+    profileUrl?: boolean
     theme?: boolean
     primaryColor?: boolean
     secondaryColor?: boolean
-    fieldIcons?: boolean
     activeFields?: boolean
     fieldData?: boolean
+    published?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
+    qrCode?: boolean | QRCodeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["digitalBusinessCard"]>
 
 
@@ -12974,6 +13034,9 @@ export namespace Prisma {
   export type DigitalBusinessCardSelectScalar = {
     id?: boolean
     userId?: boolean
+    uniqueCode?: boolean
+    template?: boolean
+    qrCodePath?: boolean
     name?: boolean
     title?: boolean
     company?: boolean
@@ -12984,29 +13047,35 @@ export namespace Prisma {
     about?: boolean
     pronoun?: boolean
     accreditations?: boolean
+    profileUrl?: boolean
     theme?: boolean
     primaryColor?: boolean
     secondaryColor?: boolean
-    fieldIcons?: boolean
     activeFields?: boolean
     fieldData?: boolean
+    published?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type DigitalBusinessCardOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "name" | "title" | "company" | "phone" | "email" | "address" | "website" | "about" | "pronoun" | "accreditations" | "theme" | "primaryColor" | "secondaryColor" | "fieldIcons" | "activeFields" | "fieldData" | "createdAt" | "updatedAt", ExtArgs["result"]["digitalBusinessCard"]>
+  export type DigitalBusinessCardOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "uniqueCode" | "template" | "qrCodePath" | "name" | "title" | "company" | "phone" | "email" | "address" | "website" | "about" | "pronoun" | "accreditations" | "profileUrl" | "theme" | "primaryColor" | "secondaryColor" | "activeFields" | "fieldData" | "published" | "createdAt" | "updatedAt", ExtArgs["result"]["digitalBusinessCard"]>
   export type DigitalBusinessCardInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
+    qrCode?: boolean | QRCodeDefaultArgs<ExtArgs>
   }
 
   export type $DigitalBusinessCardPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "DigitalBusinessCard"
     objects: {
       user: Prisma.$UserPayload<ExtArgs>
+      qrCode: Prisma.$QRCodePayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
       userId: number
+      uniqueCode: string
+      template: string
+      qrCodePath: string
       name: string
       title: string | null
       company: string | null
@@ -13017,12 +13086,13 @@ export namespace Prisma {
       about: string | null
       pronoun: string | null
       accreditations: string | null
+      profileUrl: string | null
       theme: string | null
       primaryColor: string | null
       secondaryColor: string | null
-      fieldIcons: Prisma.JsonValue | null
       activeFields: Prisma.JsonValue | null
       fieldData: Prisma.JsonValue | null
+      published: boolean
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["digitalBusinessCard"]>
@@ -13366,6 +13436,7 @@ export namespace Prisma {
   export interface Prisma__DigitalBusinessCardClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    qrCode<T extends QRCodeDefaultArgs<ExtArgs> = {}>(args?: Subset<T, QRCodeDefaultArgs<ExtArgs>>): Prisma__QRCodeClient<$Result.GetResult<Prisma.$QRCodePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -13397,6 +13468,9 @@ export namespace Prisma {
   interface DigitalBusinessCardFieldRefs {
     readonly id: FieldRef<"DigitalBusinessCard", 'Int'>
     readonly userId: FieldRef<"DigitalBusinessCard", 'Int'>
+    readonly uniqueCode: FieldRef<"DigitalBusinessCard", 'String'>
+    readonly template: FieldRef<"DigitalBusinessCard", 'String'>
+    readonly qrCodePath: FieldRef<"DigitalBusinessCard", 'String'>
     readonly name: FieldRef<"DigitalBusinessCard", 'String'>
     readonly title: FieldRef<"DigitalBusinessCard", 'String'>
     readonly company: FieldRef<"DigitalBusinessCard", 'String'>
@@ -13407,12 +13481,13 @@ export namespace Prisma {
     readonly about: FieldRef<"DigitalBusinessCard", 'String'>
     readonly pronoun: FieldRef<"DigitalBusinessCard", 'String'>
     readonly accreditations: FieldRef<"DigitalBusinessCard", 'String'>
+    readonly profileUrl: FieldRef<"DigitalBusinessCard", 'String'>
     readonly theme: FieldRef<"DigitalBusinessCard", 'String'>
     readonly primaryColor: FieldRef<"DigitalBusinessCard", 'String'>
     readonly secondaryColor: FieldRef<"DigitalBusinessCard", 'String'>
-    readonly fieldIcons: FieldRef<"DigitalBusinessCard", 'Json'>
     readonly activeFields: FieldRef<"DigitalBusinessCard", 'Json'>
     readonly fieldData: FieldRef<"DigitalBusinessCard", 'Json'>
+    readonly published: FieldRef<"DigitalBusinessCard", 'Boolean'>
     readonly createdAt: FieldRef<"DigitalBusinessCard", 'DateTime'>
     readonly updatedAt: FieldRef<"DigitalBusinessCard", 'DateTime'>
   }
@@ -13972,6 +14047,9 @@ export namespace Prisma {
   export const DigitalBusinessCardScalarFieldEnum: {
     id: 'id',
     userId: 'userId',
+    uniqueCode: 'uniqueCode',
+    template: 'template',
+    qrCodePath: 'qrCodePath',
     name: 'name',
     title: 'title',
     company: 'company',
@@ -13982,12 +14060,13 @@ export namespace Prisma {
     about: 'about',
     pronoun: 'pronoun',
     accreditations: 'accreditations',
+    profileUrl: 'profileUrl',
     theme: 'theme',
     primaryColor: 'primaryColor',
     secondaryColor: 'secondaryColor',
-    fieldIcons: 'fieldIcons',
     activeFields: 'activeFields',
     fieldData: 'fieldData',
+    published: 'published',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -14148,6 +14227,9 @@ export namespace Prisma {
 
 
   export const DigitalBusinessCardOrderByRelevanceFieldEnum: {
+    uniqueCode: 'uniqueCode',
+    template: 'template',
+    qrCodePath: 'qrCodePath',
     name: 'name',
     title: 'title',
     company: 'company',
@@ -14158,6 +14240,7 @@ export namespace Prisma {
     about: 'about',
     pronoun: 'pronoun',
     accreditations: 'accreditations',
+    profileUrl: 'profileUrl',
     theme: 'theme',
     primaryColor: 'primaryColor',
     secondaryColor: 'secondaryColor'
@@ -14604,6 +14687,7 @@ export namespace Prisma {
     user?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     scanLogs?: ScanLogListRelationFilter
     downloadLogs?: DownloadLogListRelationFilter
+    digitalBusinessCard?: XOR<DigitalBusinessCardNullableScalarRelationFilter, DigitalBusinessCardWhereInput> | null
   }
 
   export type QRCodeOrderByWithRelationInput = {
@@ -14635,6 +14719,7 @@ export namespace Prisma {
     user?: UserOrderByWithRelationInput
     scanLogs?: ScanLogOrderByRelationAggregateInput
     downloadLogs?: DownloadLogOrderByRelationAggregateInput
+    digitalBusinessCard?: DigitalBusinessCardOrderByWithRelationInput
     _relevance?: QRCodeOrderByRelevanceInput
   }
 
@@ -14670,6 +14755,7 @@ export namespace Prisma {
     user?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     scanLogs?: ScanLogListRelationFilter
     downloadLogs?: DownloadLogListRelationFilter
+    digitalBusinessCard?: XOR<DigitalBusinessCardNullableScalarRelationFilter, DigitalBusinessCardWhereInput> | null
   }, "id" | "uniqueCode">
 
   export type QRCodeOrderByWithAggregationInput = {
@@ -15186,6 +15272,9 @@ export namespace Prisma {
     NOT?: DigitalBusinessCardWhereInput | DigitalBusinessCardWhereInput[]
     id?: IntFilter<"DigitalBusinessCard"> | number
     userId?: IntFilter<"DigitalBusinessCard"> | number
+    uniqueCode?: StringFilter<"DigitalBusinessCard"> | string
+    template?: StringFilter<"DigitalBusinessCard"> | string
+    qrCodePath?: StringFilter<"DigitalBusinessCard"> | string
     name?: StringFilter<"DigitalBusinessCard"> | string
     title?: StringNullableFilter<"DigitalBusinessCard"> | string | null
     company?: StringNullableFilter<"DigitalBusinessCard"> | string | null
@@ -15196,20 +15285,25 @@ export namespace Prisma {
     about?: StringNullableFilter<"DigitalBusinessCard"> | string | null
     pronoun?: StringNullableFilter<"DigitalBusinessCard"> | string | null
     accreditations?: StringNullableFilter<"DigitalBusinessCard"> | string | null
+    profileUrl?: StringNullableFilter<"DigitalBusinessCard"> | string | null
     theme?: StringNullableFilter<"DigitalBusinessCard"> | string | null
     primaryColor?: StringNullableFilter<"DigitalBusinessCard"> | string | null
     secondaryColor?: StringNullableFilter<"DigitalBusinessCard"> | string | null
-    fieldIcons?: JsonNullableFilter<"DigitalBusinessCard">
     activeFields?: JsonNullableFilter<"DigitalBusinessCard">
     fieldData?: JsonNullableFilter<"DigitalBusinessCard">
+    published?: BoolFilter<"DigitalBusinessCard"> | boolean
     createdAt?: DateTimeFilter<"DigitalBusinessCard"> | Date | string
     updatedAt?: DateTimeFilter<"DigitalBusinessCard"> | Date | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    qrCode?: XOR<QRCodeScalarRelationFilter, QRCodeWhereInput>
   }
 
   export type DigitalBusinessCardOrderByWithRelationInput = {
     id?: SortOrder
     userId?: SortOrder
+    uniqueCode?: SortOrder
+    template?: SortOrder
+    qrCodePath?: SortOrder
     name?: SortOrder
     title?: SortOrderInput | SortOrder
     company?: SortOrderInput | SortOrder
@@ -15220,24 +15314,29 @@ export namespace Prisma {
     about?: SortOrderInput | SortOrder
     pronoun?: SortOrderInput | SortOrder
     accreditations?: SortOrderInput | SortOrder
+    profileUrl?: SortOrderInput | SortOrder
     theme?: SortOrderInput | SortOrder
     primaryColor?: SortOrderInput | SortOrder
     secondaryColor?: SortOrderInput | SortOrder
-    fieldIcons?: SortOrderInput | SortOrder
     activeFields?: SortOrderInput | SortOrder
     fieldData?: SortOrderInput | SortOrder
+    published?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     user?: UserOrderByWithRelationInput
+    qrCode?: QRCodeOrderByWithRelationInput
     _relevance?: DigitalBusinessCardOrderByRelevanceInput
   }
 
   export type DigitalBusinessCardWhereUniqueInput = Prisma.AtLeast<{
     id?: number
+    uniqueCode?: string
     AND?: DigitalBusinessCardWhereInput | DigitalBusinessCardWhereInput[]
     OR?: DigitalBusinessCardWhereInput[]
     NOT?: DigitalBusinessCardWhereInput | DigitalBusinessCardWhereInput[]
     userId?: IntFilter<"DigitalBusinessCard"> | number
+    template?: StringFilter<"DigitalBusinessCard"> | string
+    qrCodePath?: StringFilter<"DigitalBusinessCard"> | string
     name?: StringFilter<"DigitalBusinessCard"> | string
     title?: StringNullableFilter<"DigitalBusinessCard"> | string | null
     company?: StringNullableFilter<"DigitalBusinessCard"> | string | null
@@ -15248,20 +15347,25 @@ export namespace Prisma {
     about?: StringNullableFilter<"DigitalBusinessCard"> | string | null
     pronoun?: StringNullableFilter<"DigitalBusinessCard"> | string | null
     accreditations?: StringNullableFilter<"DigitalBusinessCard"> | string | null
+    profileUrl?: StringNullableFilter<"DigitalBusinessCard"> | string | null
     theme?: StringNullableFilter<"DigitalBusinessCard"> | string | null
     primaryColor?: StringNullableFilter<"DigitalBusinessCard"> | string | null
     secondaryColor?: StringNullableFilter<"DigitalBusinessCard"> | string | null
-    fieldIcons?: JsonNullableFilter<"DigitalBusinessCard">
     activeFields?: JsonNullableFilter<"DigitalBusinessCard">
     fieldData?: JsonNullableFilter<"DigitalBusinessCard">
+    published?: BoolFilter<"DigitalBusinessCard"> | boolean
     createdAt?: DateTimeFilter<"DigitalBusinessCard"> | Date | string
     updatedAt?: DateTimeFilter<"DigitalBusinessCard"> | Date | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
-  }, "id">
+    qrCode?: XOR<QRCodeScalarRelationFilter, QRCodeWhereInput>
+  }, "id" | "uniqueCode">
 
   export type DigitalBusinessCardOrderByWithAggregationInput = {
     id?: SortOrder
     userId?: SortOrder
+    uniqueCode?: SortOrder
+    template?: SortOrder
+    qrCodePath?: SortOrder
     name?: SortOrder
     title?: SortOrderInput | SortOrder
     company?: SortOrderInput | SortOrder
@@ -15272,12 +15376,13 @@ export namespace Prisma {
     about?: SortOrderInput | SortOrder
     pronoun?: SortOrderInput | SortOrder
     accreditations?: SortOrderInput | SortOrder
+    profileUrl?: SortOrderInput | SortOrder
     theme?: SortOrderInput | SortOrder
     primaryColor?: SortOrderInput | SortOrder
     secondaryColor?: SortOrderInput | SortOrder
-    fieldIcons?: SortOrderInput | SortOrder
     activeFields?: SortOrderInput | SortOrder
     fieldData?: SortOrderInput | SortOrder
+    published?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: DigitalBusinessCardCountOrderByAggregateInput
@@ -15293,6 +15398,9 @@ export namespace Prisma {
     NOT?: DigitalBusinessCardScalarWhereWithAggregatesInput | DigitalBusinessCardScalarWhereWithAggregatesInput[]
     id?: IntWithAggregatesFilter<"DigitalBusinessCard"> | number
     userId?: IntWithAggregatesFilter<"DigitalBusinessCard"> | number
+    uniqueCode?: StringWithAggregatesFilter<"DigitalBusinessCard"> | string
+    template?: StringWithAggregatesFilter<"DigitalBusinessCard"> | string
+    qrCodePath?: StringWithAggregatesFilter<"DigitalBusinessCard"> | string
     name?: StringWithAggregatesFilter<"DigitalBusinessCard"> | string
     title?: StringNullableWithAggregatesFilter<"DigitalBusinessCard"> | string | null
     company?: StringNullableWithAggregatesFilter<"DigitalBusinessCard"> | string | null
@@ -15303,12 +15411,13 @@ export namespace Prisma {
     about?: StringNullableWithAggregatesFilter<"DigitalBusinessCard"> | string | null
     pronoun?: StringNullableWithAggregatesFilter<"DigitalBusinessCard"> | string | null
     accreditations?: StringNullableWithAggregatesFilter<"DigitalBusinessCard"> | string | null
+    profileUrl?: StringNullableWithAggregatesFilter<"DigitalBusinessCard"> | string | null
     theme?: StringNullableWithAggregatesFilter<"DigitalBusinessCard"> | string | null
     primaryColor?: StringNullableWithAggregatesFilter<"DigitalBusinessCard"> | string | null
     secondaryColor?: StringNullableWithAggregatesFilter<"DigitalBusinessCard"> | string | null
-    fieldIcons?: JsonNullableWithAggregatesFilter<"DigitalBusinessCard">
     activeFields?: JsonNullableWithAggregatesFilter<"DigitalBusinessCard">
     fieldData?: JsonNullableWithAggregatesFilter<"DigitalBusinessCard">
+    published?: BoolWithAggregatesFilter<"DigitalBusinessCard"> | boolean
     createdAt?: DateTimeWithAggregatesFilter<"DigitalBusinessCard"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"DigitalBusinessCard"> | Date | string
   }
@@ -15730,6 +15839,7 @@ export namespace Prisma {
     user?: UserCreateNestedOneWithoutQrCodesInput
     scanLogs?: ScanLogCreateNestedManyWithoutQRCodeInput
     downloadLogs?: DownloadLogCreateNestedManyWithoutQRCodeInput
+    digitalBusinessCard?: DigitalBusinessCardCreateNestedOneWithoutQrCodeInput
   }
 
   export type QRCodeUncheckedCreateInput = {
@@ -15760,6 +15870,7 @@ export namespace Prisma {
     download_count?: number
     scanLogs?: ScanLogUncheckedCreateNestedManyWithoutQRCodeInput
     downloadLogs?: DownloadLogUncheckedCreateNestedManyWithoutQRCodeInput
+    digitalBusinessCard?: DigitalBusinessCardUncheckedCreateNestedOneWithoutQrCodeInput
   }
 
   export type QRCodeUpdateInput = {
@@ -15789,6 +15900,7 @@ export namespace Prisma {
     user?: UserUpdateOneWithoutQrCodesNestedInput
     scanLogs?: ScanLogUpdateManyWithoutQRCodeNestedInput
     downloadLogs?: DownloadLogUpdateManyWithoutQRCodeNestedInput
+    digitalBusinessCard?: DigitalBusinessCardUpdateOneWithoutQrCodeNestedInput
   }
 
   export type QRCodeUncheckedUpdateInput = {
@@ -15819,6 +15931,7 @@ export namespace Prisma {
     download_count?: IntFieldUpdateOperationsInput | number
     scanLogs?: ScanLogUncheckedUpdateManyWithoutQRCodeNestedInput
     downloadLogs?: DownloadLogUncheckedUpdateManyWithoutQRCodeNestedInput
+    digitalBusinessCard?: DigitalBusinessCardUncheckedUpdateOneWithoutQrCodeNestedInput
   }
 
   export type QRCodeCreateManyInput = {
@@ -16358,6 +16471,8 @@ export namespace Prisma {
   }
 
   export type DigitalBusinessCardCreateInput = {
+    template?: string
+    qrCodePath?: string
     name: string
     title?: string | null
     company?: string | null
@@ -16368,20 +16483,25 @@ export namespace Prisma {
     about?: string | null
     pronoun?: string | null
     accreditations?: string | null
+    profileUrl?: string | null
     theme?: string | null
     primaryColor?: string | null
     secondaryColor?: string | null
-    fieldIcons?: NullableJsonNullValueInput | InputJsonValue
     activeFields?: NullableJsonNullValueInput | InputJsonValue
     fieldData?: NullableJsonNullValueInput | InputJsonValue
+    published?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     user: UserCreateNestedOneWithoutDigitalBusinessCardsInput
+    qrCode?: QRCodeCreateNestedOneWithoutDigitalBusinessCardInput
   }
 
   export type DigitalBusinessCardUncheckedCreateInput = {
     id?: number
     userId: number
+    uniqueCode?: string
+    template?: string
+    qrCodePath?: string
     name: string
     title?: string | null
     company?: string | null
@@ -16392,17 +16512,20 @@ export namespace Prisma {
     about?: string | null
     pronoun?: string | null
     accreditations?: string | null
+    profileUrl?: string | null
     theme?: string | null
     primaryColor?: string | null
     secondaryColor?: string | null
-    fieldIcons?: NullableJsonNullValueInput | InputJsonValue
     activeFields?: NullableJsonNullValueInput | InputJsonValue
     fieldData?: NullableJsonNullValueInput | InputJsonValue
+    published?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
   }
 
   export type DigitalBusinessCardUpdateInput = {
+    template?: StringFieldUpdateOperationsInput | string
+    qrCodePath?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     title?: NullableStringFieldUpdateOperationsInput | string | null
     company?: NullableStringFieldUpdateOperationsInput | string | null
@@ -16413,20 +16536,25 @@ export namespace Prisma {
     about?: NullableStringFieldUpdateOperationsInput | string | null
     pronoun?: NullableStringFieldUpdateOperationsInput | string | null
     accreditations?: NullableStringFieldUpdateOperationsInput | string | null
+    profileUrl?: NullableStringFieldUpdateOperationsInput | string | null
     theme?: NullableStringFieldUpdateOperationsInput | string | null
     primaryColor?: NullableStringFieldUpdateOperationsInput | string | null
     secondaryColor?: NullableStringFieldUpdateOperationsInput | string | null
-    fieldIcons?: NullableJsonNullValueInput | InputJsonValue
     activeFields?: NullableJsonNullValueInput | InputJsonValue
     fieldData?: NullableJsonNullValueInput | InputJsonValue
+    published?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutDigitalBusinessCardsNestedInput
+    qrCode?: QRCodeUpdateOneRequiredWithoutDigitalBusinessCardNestedInput
   }
 
   export type DigitalBusinessCardUncheckedUpdateInput = {
     id?: IntFieldUpdateOperationsInput | number
     userId?: IntFieldUpdateOperationsInput | number
+    uniqueCode?: StringFieldUpdateOperationsInput | string
+    template?: StringFieldUpdateOperationsInput | string
+    qrCodePath?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     title?: NullableStringFieldUpdateOperationsInput | string | null
     company?: NullableStringFieldUpdateOperationsInput | string | null
@@ -16437,12 +16565,13 @@ export namespace Prisma {
     about?: NullableStringFieldUpdateOperationsInput | string | null
     pronoun?: NullableStringFieldUpdateOperationsInput | string | null
     accreditations?: NullableStringFieldUpdateOperationsInput | string | null
+    profileUrl?: NullableStringFieldUpdateOperationsInput | string | null
     theme?: NullableStringFieldUpdateOperationsInput | string | null
     primaryColor?: NullableStringFieldUpdateOperationsInput | string | null
     secondaryColor?: NullableStringFieldUpdateOperationsInput | string | null
-    fieldIcons?: NullableJsonNullValueInput | InputJsonValue
     activeFields?: NullableJsonNullValueInput | InputJsonValue
     fieldData?: NullableJsonNullValueInput | InputJsonValue
+    published?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -16450,6 +16579,9 @@ export namespace Prisma {
   export type DigitalBusinessCardCreateManyInput = {
     id?: number
     userId: number
+    uniqueCode?: string
+    template?: string
+    qrCodePath?: string
     name: string
     title?: string | null
     company?: string | null
@@ -16460,17 +16592,20 @@ export namespace Prisma {
     about?: string | null
     pronoun?: string | null
     accreditations?: string | null
+    profileUrl?: string | null
     theme?: string | null
     primaryColor?: string | null
     secondaryColor?: string | null
-    fieldIcons?: NullableJsonNullValueInput | InputJsonValue
     activeFields?: NullableJsonNullValueInput | InputJsonValue
     fieldData?: NullableJsonNullValueInput | InputJsonValue
+    published?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
   }
 
   export type DigitalBusinessCardUpdateManyMutationInput = {
+    template?: StringFieldUpdateOperationsInput | string
+    qrCodePath?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     title?: NullableStringFieldUpdateOperationsInput | string | null
     company?: NullableStringFieldUpdateOperationsInput | string | null
@@ -16481,12 +16616,13 @@ export namespace Prisma {
     about?: NullableStringFieldUpdateOperationsInput | string | null
     pronoun?: NullableStringFieldUpdateOperationsInput | string | null
     accreditations?: NullableStringFieldUpdateOperationsInput | string | null
+    profileUrl?: NullableStringFieldUpdateOperationsInput | string | null
     theme?: NullableStringFieldUpdateOperationsInput | string | null
     primaryColor?: NullableStringFieldUpdateOperationsInput | string | null
     secondaryColor?: NullableStringFieldUpdateOperationsInput | string | null
-    fieldIcons?: NullableJsonNullValueInput | InputJsonValue
     activeFields?: NullableJsonNullValueInput | InputJsonValue
     fieldData?: NullableJsonNullValueInput | InputJsonValue
+    published?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -16494,6 +16630,9 @@ export namespace Prisma {
   export type DigitalBusinessCardUncheckedUpdateManyInput = {
     id?: IntFieldUpdateOperationsInput | number
     userId?: IntFieldUpdateOperationsInput | number
+    uniqueCode?: StringFieldUpdateOperationsInput | string
+    template?: StringFieldUpdateOperationsInput | string
+    qrCodePath?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     title?: NullableStringFieldUpdateOperationsInput | string | null
     company?: NullableStringFieldUpdateOperationsInput | string | null
@@ -16504,12 +16643,13 @@ export namespace Prisma {
     about?: NullableStringFieldUpdateOperationsInput | string | null
     pronoun?: NullableStringFieldUpdateOperationsInput | string | null
     accreditations?: NullableStringFieldUpdateOperationsInput | string | null
+    profileUrl?: NullableStringFieldUpdateOperationsInput | string | null
     theme?: NullableStringFieldUpdateOperationsInput | string | null
     primaryColor?: NullableStringFieldUpdateOperationsInput | string | null
     secondaryColor?: NullableStringFieldUpdateOperationsInput | string | null
-    fieldIcons?: NullableJsonNullValueInput | InputJsonValue
     activeFields?: NullableJsonNullValueInput | InputJsonValue
     fieldData?: NullableJsonNullValueInput | InputJsonValue
+    published?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -17016,6 +17156,11 @@ export namespace Prisma {
     every?: DownloadLogWhereInput
     some?: DownloadLogWhereInput
     none?: DownloadLogWhereInput
+  }
+
+  export type DigitalBusinessCardNullableScalarRelationFilter = {
+    is?: DigitalBusinessCardWhereInput | null
+    isNot?: DigitalBusinessCardWhereInput | null
   }
 
   export type ScanLogOrderByRelationAggregateInput = {
@@ -17539,6 +17684,9 @@ export namespace Prisma {
   export type DigitalBusinessCardCountOrderByAggregateInput = {
     id?: SortOrder
     userId?: SortOrder
+    uniqueCode?: SortOrder
+    template?: SortOrder
+    qrCodePath?: SortOrder
     name?: SortOrder
     title?: SortOrder
     company?: SortOrder
@@ -17549,12 +17697,13 @@ export namespace Prisma {
     about?: SortOrder
     pronoun?: SortOrder
     accreditations?: SortOrder
+    profileUrl?: SortOrder
     theme?: SortOrder
     primaryColor?: SortOrder
     secondaryColor?: SortOrder
-    fieldIcons?: SortOrder
     activeFields?: SortOrder
     fieldData?: SortOrder
+    published?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -17567,6 +17716,9 @@ export namespace Prisma {
   export type DigitalBusinessCardMaxOrderByAggregateInput = {
     id?: SortOrder
     userId?: SortOrder
+    uniqueCode?: SortOrder
+    template?: SortOrder
+    qrCodePath?: SortOrder
     name?: SortOrder
     title?: SortOrder
     company?: SortOrder
@@ -17577,9 +17729,11 @@ export namespace Prisma {
     about?: SortOrder
     pronoun?: SortOrder
     accreditations?: SortOrder
+    profileUrl?: SortOrder
     theme?: SortOrder
     primaryColor?: SortOrder
     secondaryColor?: SortOrder
+    published?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -17587,6 +17741,9 @@ export namespace Prisma {
   export type DigitalBusinessCardMinOrderByAggregateInput = {
     id?: SortOrder
     userId?: SortOrder
+    uniqueCode?: SortOrder
+    template?: SortOrder
+    qrCodePath?: SortOrder
     name?: SortOrder
     title?: SortOrder
     company?: SortOrder
@@ -17597,9 +17754,11 @@ export namespace Prisma {
     about?: SortOrder
     pronoun?: SortOrder
     accreditations?: SortOrder
+    profileUrl?: SortOrder
     theme?: SortOrder
     primaryColor?: SortOrder
     secondaryColor?: SortOrder
+    published?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -17989,6 +18148,12 @@ export namespace Prisma {
     connect?: DownloadLogWhereUniqueInput | DownloadLogWhereUniqueInput[]
   }
 
+  export type DigitalBusinessCardCreateNestedOneWithoutQrCodeInput = {
+    create?: XOR<DigitalBusinessCardCreateWithoutQrCodeInput, DigitalBusinessCardUncheckedCreateWithoutQrCodeInput>
+    connectOrCreate?: DigitalBusinessCardCreateOrConnectWithoutQrCodeInput
+    connect?: DigitalBusinessCardWhereUniqueInput
+  }
+
   export type ScanLogUncheckedCreateNestedManyWithoutQRCodeInput = {
     create?: XOR<ScanLogCreateWithoutQRCodeInput, ScanLogUncheckedCreateWithoutQRCodeInput> | ScanLogCreateWithoutQRCodeInput[] | ScanLogUncheckedCreateWithoutQRCodeInput[]
     connectOrCreate?: ScanLogCreateOrConnectWithoutQRCodeInput | ScanLogCreateOrConnectWithoutQRCodeInput[]
@@ -18001,6 +18166,12 @@ export namespace Prisma {
     connectOrCreate?: DownloadLogCreateOrConnectWithoutQRCodeInput | DownloadLogCreateOrConnectWithoutQRCodeInput[]
     createMany?: DownloadLogCreateManyQRCodeInputEnvelope
     connect?: DownloadLogWhereUniqueInput | DownloadLogWhereUniqueInput[]
+  }
+
+  export type DigitalBusinessCardUncheckedCreateNestedOneWithoutQrCodeInput = {
+    create?: XOR<DigitalBusinessCardCreateWithoutQrCodeInput, DigitalBusinessCardUncheckedCreateWithoutQrCodeInput>
+    connectOrCreate?: DigitalBusinessCardCreateOrConnectWithoutQrCodeInput
+    connect?: DigitalBusinessCardWhereUniqueInput
   }
 
   export type UserUpdateOneWithoutQrCodesNestedInput = {
@@ -18041,6 +18212,16 @@ export namespace Prisma {
     deleteMany?: DownloadLogScalarWhereInput | DownloadLogScalarWhereInput[]
   }
 
+  export type DigitalBusinessCardUpdateOneWithoutQrCodeNestedInput = {
+    create?: XOR<DigitalBusinessCardCreateWithoutQrCodeInput, DigitalBusinessCardUncheckedCreateWithoutQrCodeInput>
+    connectOrCreate?: DigitalBusinessCardCreateOrConnectWithoutQrCodeInput
+    upsert?: DigitalBusinessCardUpsertWithoutQrCodeInput
+    disconnect?: DigitalBusinessCardWhereInput | boolean
+    delete?: DigitalBusinessCardWhereInput | boolean
+    connect?: DigitalBusinessCardWhereUniqueInput
+    update?: XOR<XOR<DigitalBusinessCardUpdateToOneWithWhereWithoutQrCodeInput, DigitalBusinessCardUpdateWithoutQrCodeInput>, DigitalBusinessCardUncheckedUpdateWithoutQrCodeInput>
+  }
+
   export type ScanLogUncheckedUpdateManyWithoutQRCodeNestedInput = {
     create?: XOR<ScanLogCreateWithoutQRCodeInput, ScanLogUncheckedCreateWithoutQRCodeInput> | ScanLogCreateWithoutQRCodeInput[] | ScanLogUncheckedCreateWithoutQRCodeInput[]
     connectOrCreate?: ScanLogCreateOrConnectWithoutQRCodeInput | ScanLogCreateOrConnectWithoutQRCodeInput[]
@@ -18067,6 +18248,16 @@ export namespace Prisma {
     update?: DownloadLogUpdateWithWhereUniqueWithoutQRCodeInput | DownloadLogUpdateWithWhereUniqueWithoutQRCodeInput[]
     updateMany?: DownloadLogUpdateManyWithWhereWithoutQRCodeInput | DownloadLogUpdateManyWithWhereWithoutQRCodeInput[]
     deleteMany?: DownloadLogScalarWhereInput | DownloadLogScalarWhereInput[]
+  }
+
+  export type DigitalBusinessCardUncheckedUpdateOneWithoutQrCodeNestedInput = {
+    create?: XOR<DigitalBusinessCardCreateWithoutQrCodeInput, DigitalBusinessCardUncheckedCreateWithoutQrCodeInput>
+    connectOrCreate?: DigitalBusinessCardCreateOrConnectWithoutQrCodeInput
+    upsert?: DigitalBusinessCardUpsertWithoutQrCodeInput
+    disconnect?: DigitalBusinessCardWhereInput | boolean
+    delete?: DigitalBusinessCardWhereInput | boolean
+    connect?: DigitalBusinessCardWhereUniqueInput
+    update?: XOR<XOR<DigitalBusinessCardUpdateToOneWithWhereWithoutQrCodeInput, DigitalBusinessCardUpdateWithoutQrCodeInput>, DigitalBusinessCardUncheckedUpdateWithoutQrCodeInput>
   }
 
   export type QRCodeCreateNestedOneWithoutScanLogsInput = {
@@ -18237,12 +18428,26 @@ export namespace Prisma {
     connect?: UserWhereUniqueInput
   }
 
+  export type QRCodeCreateNestedOneWithoutDigitalBusinessCardInput = {
+    create?: XOR<QRCodeCreateWithoutDigitalBusinessCardInput, QRCodeUncheckedCreateWithoutDigitalBusinessCardInput>
+    connectOrCreate?: QRCodeCreateOrConnectWithoutDigitalBusinessCardInput
+    connect?: QRCodeWhereUniqueInput
+  }
+
   export type UserUpdateOneRequiredWithoutDigitalBusinessCardsNestedInput = {
     create?: XOR<UserCreateWithoutDigitalBusinessCardsInput, UserUncheckedCreateWithoutDigitalBusinessCardsInput>
     connectOrCreate?: UserCreateOrConnectWithoutDigitalBusinessCardsInput
     upsert?: UserUpsertWithoutDigitalBusinessCardsInput
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutDigitalBusinessCardsInput, UserUpdateWithoutDigitalBusinessCardsInput>, UserUncheckedUpdateWithoutDigitalBusinessCardsInput>
+  }
+
+  export type QRCodeUpdateOneRequiredWithoutDigitalBusinessCardNestedInput = {
+    create?: XOR<QRCodeCreateWithoutDigitalBusinessCardInput, QRCodeUncheckedCreateWithoutDigitalBusinessCardInput>
+    connectOrCreate?: QRCodeCreateOrConnectWithoutDigitalBusinessCardInput
+    upsert?: QRCodeUpsertWithoutDigitalBusinessCardInput
+    connect?: QRCodeWhereUniqueInput
+    update?: XOR<XOR<QRCodeUpdateToOneWithWhereWithoutDigitalBusinessCardInput, QRCodeUpdateWithoutDigitalBusinessCardInput>, QRCodeUncheckedUpdateWithoutDigitalBusinessCardInput>
   }
 
   export type NestedIntFilter<$PrismaModel = never> = {
@@ -18549,6 +18754,7 @@ export namespace Prisma {
     download_count?: number
     scanLogs?: ScanLogCreateNestedManyWithoutQRCodeInput
     downloadLogs?: DownloadLogCreateNestedManyWithoutQRCodeInput
+    digitalBusinessCard?: DigitalBusinessCardCreateNestedOneWithoutQrCodeInput
   }
 
   export type QRCodeUncheckedCreateWithoutUserInput = {
@@ -18578,6 +18784,7 @@ export namespace Prisma {
     download_count?: number
     scanLogs?: ScanLogUncheckedCreateNestedManyWithoutQRCodeInput
     downloadLogs?: DownloadLogUncheckedCreateNestedManyWithoutQRCodeInput
+    digitalBusinessCard?: DigitalBusinessCardUncheckedCreateNestedOneWithoutQrCodeInput
   }
 
   export type QRCodeCreateOrConnectWithoutUserInput = {
@@ -18704,6 +18911,8 @@ export namespace Prisma {
   }
 
   export type DigitalBusinessCardCreateWithoutUserInput = {
+    template?: string
+    qrCodePath?: string
     name: string
     title?: string | null
     company?: string | null
@@ -18714,18 +18923,23 @@ export namespace Prisma {
     about?: string | null
     pronoun?: string | null
     accreditations?: string | null
+    profileUrl?: string | null
     theme?: string | null
     primaryColor?: string | null
     secondaryColor?: string | null
-    fieldIcons?: NullableJsonNullValueInput | InputJsonValue
     activeFields?: NullableJsonNullValueInput | InputJsonValue
     fieldData?: NullableJsonNullValueInput | InputJsonValue
+    published?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    qrCode?: QRCodeCreateNestedOneWithoutDigitalBusinessCardInput
   }
 
   export type DigitalBusinessCardUncheckedCreateWithoutUserInput = {
     id?: number
+    uniqueCode?: string
+    template?: string
+    qrCodePath?: string
     name: string
     title?: string | null
     company?: string | null
@@ -18736,12 +18950,13 @@ export namespace Prisma {
     about?: string | null
     pronoun?: string | null
     accreditations?: string | null
+    profileUrl?: string | null
     theme?: string | null
     primaryColor?: string | null
     secondaryColor?: string | null
-    fieldIcons?: NullableJsonNullValueInput | InputJsonValue
     activeFields?: NullableJsonNullValueInput | InputJsonValue
     fieldData?: NullableJsonNullValueInput | InputJsonValue
+    published?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -18950,6 +19165,9 @@ export namespace Prisma {
     NOT?: DigitalBusinessCardScalarWhereInput | DigitalBusinessCardScalarWhereInput[]
     id?: IntFilter<"DigitalBusinessCard"> | number
     userId?: IntFilter<"DigitalBusinessCard"> | number
+    uniqueCode?: StringFilter<"DigitalBusinessCard"> | string
+    template?: StringFilter<"DigitalBusinessCard"> | string
+    qrCodePath?: StringFilter<"DigitalBusinessCard"> | string
     name?: StringFilter<"DigitalBusinessCard"> | string
     title?: StringNullableFilter<"DigitalBusinessCard"> | string | null
     company?: StringNullableFilter<"DigitalBusinessCard"> | string | null
@@ -18960,12 +19178,13 @@ export namespace Prisma {
     about?: StringNullableFilter<"DigitalBusinessCard"> | string | null
     pronoun?: StringNullableFilter<"DigitalBusinessCard"> | string | null
     accreditations?: StringNullableFilter<"DigitalBusinessCard"> | string | null
+    profileUrl?: StringNullableFilter<"DigitalBusinessCard"> | string | null
     theme?: StringNullableFilter<"DigitalBusinessCard"> | string | null
     primaryColor?: StringNullableFilter<"DigitalBusinessCard"> | string | null
     secondaryColor?: StringNullableFilter<"DigitalBusinessCard"> | string | null
-    fieldIcons?: JsonNullableFilter<"DigitalBusinessCard">
     activeFields?: JsonNullableFilter<"DigitalBusinessCard">
     fieldData?: JsonNullableFilter<"DigitalBusinessCard">
+    published?: BoolFilter<"DigitalBusinessCard"> | boolean
     createdAt?: DateTimeFilter<"DigitalBusinessCard"> | Date | string
     updatedAt?: DateTimeFilter<"DigitalBusinessCard"> | Date | string
   }
@@ -19361,6 +19580,62 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type DigitalBusinessCardCreateWithoutQrCodeInput = {
+    template?: string
+    qrCodePath?: string
+    name: string
+    title?: string | null
+    company?: string | null
+    phone?: string | null
+    email?: string | null
+    address?: string | null
+    website?: string | null
+    about?: string | null
+    pronoun?: string | null
+    accreditations?: string | null
+    profileUrl?: string | null
+    theme?: string | null
+    primaryColor?: string | null
+    secondaryColor?: string | null
+    activeFields?: NullableJsonNullValueInput | InputJsonValue
+    fieldData?: NullableJsonNullValueInput | InputJsonValue
+    published?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    user: UserCreateNestedOneWithoutDigitalBusinessCardsInput
+  }
+
+  export type DigitalBusinessCardUncheckedCreateWithoutQrCodeInput = {
+    id?: number
+    userId: number
+    template?: string
+    qrCodePath?: string
+    name: string
+    title?: string | null
+    company?: string | null
+    phone?: string | null
+    email?: string | null
+    address?: string | null
+    website?: string | null
+    about?: string | null
+    pronoun?: string | null
+    accreditations?: string | null
+    profileUrl?: string | null
+    theme?: string | null
+    primaryColor?: string | null
+    secondaryColor?: string | null
+    activeFields?: NullableJsonNullValueInput | InputJsonValue
+    fieldData?: NullableJsonNullValueInput | InputJsonValue
+    published?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type DigitalBusinessCardCreateOrConnectWithoutQrCodeInput = {
+    where: DigitalBusinessCardWhereUniqueInput
+    create: XOR<DigitalBusinessCardCreateWithoutQrCodeInput, DigitalBusinessCardUncheckedCreateWithoutQrCodeInput>
+  }
+
   export type UserUpsertWithoutQrCodesInput = {
     update: XOR<UserUpdateWithoutQrCodesInput, UserUncheckedUpdateWithoutQrCodesInput>
     create: XOR<UserCreateWithoutQrCodesInput, UserUncheckedCreateWithoutQrCodesInput>
@@ -19499,6 +19774,68 @@ export namespace Prisma {
     downloaded_at?: DateTimeFilter<"DownloadLog"> | Date | string
   }
 
+  export type DigitalBusinessCardUpsertWithoutQrCodeInput = {
+    update: XOR<DigitalBusinessCardUpdateWithoutQrCodeInput, DigitalBusinessCardUncheckedUpdateWithoutQrCodeInput>
+    create: XOR<DigitalBusinessCardCreateWithoutQrCodeInput, DigitalBusinessCardUncheckedCreateWithoutQrCodeInput>
+    where?: DigitalBusinessCardWhereInput
+  }
+
+  export type DigitalBusinessCardUpdateToOneWithWhereWithoutQrCodeInput = {
+    where?: DigitalBusinessCardWhereInput
+    data: XOR<DigitalBusinessCardUpdateWithoutQrCodeInput, DigitalBusinessCardUncheckedUpdateWithoutQrCodeInput>
+  }
+
+  export type DigitalBusinessCardUpdateWithoutQrCodeInput = {
+    template?: StringFieldUpdateOperationsInput | string
+    qrCodePath?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    company?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    website?: NullableStringFieldUpdateOperationsInput | string | null
+    about?: NullableStringFieldUpdateOperationsInput | string | null
+    pronoun?: NullableStringFieldUpdateOperationsInput | string | null
+    accreditations?: NullableStringFieldUpdateOperationsInput | string | null
+    profileUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    theme?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColor?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryColor?: NullableStringFieldUpdateOperationsInput | string | null
+    activeFields?: NullableJsonNullValueInput | InputJsonValue
+    fieldData?: NullableJsonNullValueInput | InputJsonValue
+    published?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutDigitalBusinessCardsNestedInput
+  }
+
+  export type DigitalBusinessCardUncheckedUpdateWithoutQrCodeInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    userId?: IntFieldUpdateOperationsInput | number
+    template?: StringFieldUpdateOperationsInput | string
+    qrCodePath?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    company?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    website?: NullableStringFieldUpdateOperationsInput | string | null
+    about?: NullableStringFieldUpdateOperationsInput | string | null
+    pronoun?: NullableStringFieldUpdateOperationsInput | string | null
+    accreditations?: NullableStringFieldUpdateOperationsInput | string | null
+    profileUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    theme?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColor?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryColor?: NullableStringFieldUpdateOperationsInput | string | null
+    activeFields?: NullableJsonNullValueInput | InputJsonValue
+    fieldData?: NullableJsonNullValueInput | InputJsonValue
+    published?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type QRCodeCreateWithoutScanLogsInput = {
     qrData: JsonNullValueInput | InputJsonValue
     lastLink?: string | null
@@ -19525,6 +19862,7 @@ export namespace Prisma {
     download_count?: number
     user?: UserCreateNestedOneWithoutQrCodesInput
     downloadLogs?: DownloadLogCreateNestedManyWithoutQRCodeInput
+    digitalBusinessCard?: DigitalBusinessCardCreateNestedOneWithoutQrCodeInput
   }
 
   export type QRCodeUncheckedCreateWithoutScanLogsInput = {
@@ -19554,6 +19892,7 @@ export namespace Prisma {
     qrStatus?: boolean
     download_count?: number
     downloadLogs?: DownloadLogUncheckedCreateNestedManyWithoutQRCodeInput
+    digitalBusinessCard?: DigitalBusinessCardUncheckedCreateNestedOneWithoutQrCodeInput
   }
 
   export type QRCodeCreateOrConnectWithoutScanLogsInput = {
@@ -19598,6 +19937,7 @@ export namespace Prisma {
     download_count?: IntFieldUpdateOperationsInput | number
     user?: UserUpdateOneWithoutQrCodesNestedInput
     downloadLogs?: DownloadLogUpdateManyWithoutQRCodeNestedInput
+    digitalBusinessCard?: DigitalBusinessCardUpdateOneWithoutQrCodeNestedInput
   }
 
   export type QRCodeUncheckedUpdateWithoutScanLogsInput = {
@@ -19627,6 +19967,7 @@ export namespace Prisma {
     qrStatus?: BoolFieldUpdateOperationsInput | boolean
     download_count?: IntFieldUpdateOperationsInput | number
     downloadLogs?: DownloadLogUncheckedUpdateManyWithoutQRCodeNestedInput
+    digitalBusinessCard?: DigitalBusinessCardUncheckedUpdateOneWithoutQrCodeNestedInput
   }
 
   export type QRCodeCreateWithoutDownloadLogsInput = {
@@ -19655,6 +19996,7 @@ export namespace Prisma {
     download_count?: number
     user?: UserCreateNestedOneWithoutQrCodesInput
     scanLogs?: ScanLogCreateNestedManyWithoutQRCodeInput
+    digitalBusinessCard?: DigitalBusinessCardCreateNestedOneWithoutQrCodeInput
   }
 
   export type QRCodeUncheckedCreateWithoutDownloadLogsInput = {
@@ -19684,6 +20026,7 @@ export namespace Prisma {
     qrStatus?: boolean
     download_count?: number
     scanLogs?: ScanLogUncheckedCreateNestedManyWithoutQRCodeInput
+    digitalBusinessCard?: DigitalBusinessCardUncheckedCreateNestedOneWithoutQrCodeInput
   }
 
   export type QRCodeCreateOrConnectWithoutDownloadLogsInput = {
@@ -19728,6 +20071,7 @@ export namespace Prisma {
     download_count?: IntFieldUpdateOperationsInput | number
     user?: UserUpdateOneWithoutQrCodesNestedInput
     scanLogs?: ScanLogUpdateManyWithoutQRCodeNestedInput
+    digitalBusinessCard?: DigitalBusinessCardUpdateOneWithoutQrCodeNestedInput
   }
 
   export type QRCodeUncheckedUpdateWithoutDownloadLogsInput = {
@@ -19757,6 +20101,7 @@ export namespace Prisma {
     qrStatus?: BoolFieldUpdateOperationsInput | boolean
     download_count?: IntFieldUpdateOperationsInput | number
     scanLogs?: ScanLogUncheckedUpdateManyWithoutQRCodeNestedInput
+    digitalBusinessCard?: DigitalBusinessCardUncheckedUpdateOneWithoutQrCodeNestedInput
   }
 
   export type UserCreateWithoutProfileUpdateLogsInput = {
@@ -20376,6 +20721,70 @@ export namespace Prisma {
     create: XOR<UserCreateWithoutDigitalBusinessCardsInput, UserUncheckedCreateWithoutDigitalBusinessCardsInput>
   }
 
+  export type QRCodeCreateWithoutDigitalBusinessCardInput = {
+    qrData: JsonNullValueInput | InputJsonValue
+    lastLink?: string | null
+    uniqueCode?: string
+    cornerShape?: string
+    eyeShape?: string
+    qrShape?: string
+    foregroundColor?: string
+    backgroundColor?: string
+    dotColor?: string | null
+    cornerColor?: string | null
+    eyeColor?: string | null
+    updateCount?: number
+    qrCodeImagePath?: string | null
+    logoPath?: string | null
+    frameStyle?: string | null
+    frameText?: string | null
+    frameTextSize?: string | null
+    frameColor?: string | null
+    frameTextColor?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    qrStatus?: boolean
+    download_count?: number
+    user?: UserCreateNestedOneWithoutQrCodesInput
+    scanLogs?: ScanLogCreateNestedManyWithoutQRCodeInput
+    downloadLogs?: DownloadLogCreateNestedManyWithoutQRCodeInput
+  }
+
+  export type QRCodeUncheckedCreateWithoutDigitalBusinessCardInput = {
+    id?: number
+    qrData: JsonNullValueInput | InputJsonValue
+    lastLink?: string | null
+    uniqueCode?: string
+    cornerShape?: string
+    eyeShape?: string
+    qrShape?: string
+    foregroundColor?: string
+    backgroundColor?: string
+    dotColor?: string | null
+    cornerColor?: string | null
+    eyeColor?: string | null
+    updateCount?: number
+    qrCodeImagePath?: string | null
+    logoPath?: string | null
+    frameStyle?: string | null
+    frameText?: string | null
+    frameTextSize?: string | null
+    frameColor?: string | null
+    frameTextColor?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    userId?: number | null
+    qrStatus?: boolean
+    download_count?: number
+    scanLogs?: ScanLogUncheckedCreateNestedManyWithoutQRCodeInput
+    downloadLogs?: DownloadLogUncheckedCreateNestedManyWithoutQRCodeInput
+  }
+
+  export type QRCodeCreateOrConnectWithoutDigitalBusinessCardInput = {
+    where: QRCodeWhereUniqueInput
+    create: XOR<QRCodeCreateWithoutDigitalBusinessCardInput, QRCodeUncheckedCreateWithoutDigitalBusinessCardInput>
+  }
+
   export type UserUpsertWithoutDigitalBusinessCardsInput = {
     update: XOR<UserUpdateWithoutDigitalBusinessCardsInput, UserUncheckedUpdateWithoutDigitalBusinessCardsInput>
     create: XOR<UserCreateWithoutDigitalBusinessCardsInput, UserUncheckedCreateWithoutDigitalBusinessCardsInput>
@@ -20454,6 +20863,76 @@ export namespace Prisma {
     adminActions?: AdminActionUncheckedUpdateManyWithoutUserNestedInput
   }
 
+  export type QRCodeUpsertWithoutDigitalBusinessCardInput = {
+    update: XOR<QRCodeUpdateWithoutDigitalBusinessCardInput, QRCodeUncheckedUpdateWithoutDigitalBusinessCardInput>
+    create: XOR<QRCodeCreateWithoutDigitalBusinessCardInput, QRCodeUncheckedCreateWithoutDigitalBusinessCardInput>
+    where?: QRCodeWhereInput
+  }
+
+  export type QRCodeUpdateToOneWithWhereWithoutDigitalBusinessCardInput = {
+    where?: QRCodeWhereInput
+    data: XOR<QRCodeUpdateWithoutDigitalBusinessCardInput, QRCodeUncheckedUpdateWithoutDigitalBusinessCardInput>
+  }
+
+  export type QRCodeUpdateWithoutDigitalBusinessCardInput = {
+    qrData?: JsonNullValueInput | InputJsonValue
+    lastLink?: NullableStringFieldUpdateOperationsInput | string | null
+    uniqueCode?: StringFieldUpdateOperationsInput | string
+    cornerShape?: StringFieldUpdateOperationsInput | string
+    eyeShape?: StringFieldUpdateOperationsInput | string
+    qrShape?: StringFieldUpdateOperationsInput | string
+    foregroundColor?: StringFieldUpdateOperationsInput | string
+    backgroundColor?: StringFieldUpdateOperationsInput | string
+    dotColor?: NullableStringFieldUpdateOperationsInput | string | null
+    cornerColor?: NullableStringFieldUpdateOperationsInput | string | null
+    eyeColor?: NullableStringFieldUpdateOperationsInput | string | null
+    updateCount?: IntFieldUpdateOperationsInput | number
+    qrCodeImagePath?: NullableStringFieldUpdateOperationsInput | string | null
+    logoPath?: NullableStringFieldUpdateOperationsInput | string | null
+    frameStyle?: NullableStringFieldUpdateOperationsInput | string | null
+    frameText?: NullableStringFieldUpdateOperationsInput | string | null
+    frameTextSize?: NullableStringFieldUpdateOperationsInput | string | null
+    frameColor?: NullableStringFieldUpdateOperationsInput | string | null
+    frameTextColor?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    qrStatus?: BoolFieldUpdateOperationsInput | boolean
+    download_count?: IntFieldUpdateOperationsInput | number
+    user?: UserUpdateOneWithoutQrCodesNestedInput
+    scanLogs?: ScanLogUpdateManyWithoutQRCodeNestedInput
+    downloadLogs?: DownloadLogUpdateManyWithoutQRCodeNestedInput
+  }
+
+  export type QRCodeUncheckedUpdateWithoutDigitalBusinessCardInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    qrData?: JsonNullValueInput | InputJsonValue
+    lastLink?: NullableStringFieldUpdateOperationsInput | string | null
+    uniqueCode?: StringFieldUpdateOperationsInput | string
+    cornerShape?: StringFieldUpdateOperationsInput | string
+    eyeShape?: StringFieldUpdateOperationsInput | string
+    qrShape?: StringFieldUpdateOperationsInput | string
+    foregroundColor?: StringFieldUpdateOperationsInput | string
+    backgroundColor?: StringFieldUpdateOperationsInput | string
+    dotColor?: NullableStringFieldUpdateOperationsInput | string | null
+    cornerColor?: NullableStringFieldUpdateOperationsInput | string | null
+    eyeColor?: NullableStringFieldUpdateOperationsInput | string | null
+    updateCount?: IntFieldUpdateOperationsInput | number
+    qrCodeImagePath?: NullableStringFieldUpdateOperationsInput | string | null
+    logoPath?: NullableStringFieldUpdateOperationsInput | string | null
+    frameStyle?: NullableStringFieldUpdateOperationsInput | string | null
+    frameText?: NullableStringFieldUpdateOperationsInput | string | null
+    frameTextSize?: NullableStringFieldUpdateOperationsInput | string | null
+    frameColor?: NullableStringFieldUpdateOperationsInput | string | null
+    frameTextColor?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    userId?: NullableIntFieldUpdateOperationsInput | number | null
+    qrStatus?: BoolFieldUpdateOperationsInput | boolean
+    download_count?: IntFieldUpdateOperationsInput | number
+    scanLogs?: ScanLogUncheckedUpdateManyWithoutQRCodeNestedInput
+    downloadLogs?: DownloadLogUncheckedUpdateManyWithoutQRCodeNestedInput
+  }
+
   export type QRCodeCreateManyUserInput = {
     id?: number
     qrData: JsonNullValueInput | InputJsonValue
@@ -20510,6 +20989,9 @@ export namespace Prisma {
 
   export type DigitalBusinessCardCreateManyUserInput = {
     id?: number
+    uniqueCode?: string
+    template?: string
+    qrCodePath?: string
     name: string
     title?: string | null
     company?: string | null
@@ -20520,12 +21002,13 @@ export namespace Prisma {
     about?: string | null
     pronoun?: string | null
     accreditations?: string | null
+    profileUrl?: string | null
     theme?: string | null
     primaryColor?: string | null
     secondaryColor?: string | null
-    fieldIcons?: NullableJsonNullValueInput | InputJsonValue
     activeFields?: NullableJsonNullValueInput | InputJsonValue
     fieldData?: NullableJsonNullValueInput | InputJsonValue
+    published?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -20556,6 +21039,7 @@ export namespace Prisma {
     download_count?: IntFieldUpdateOperationsInput | number
     scanLogs?: ScanLogUpdateManyWithoutQRCodeNestedInput
     downloadLogs?: DownloadLogUpdateManyWithoutQRCodeNestedInput
+    digitalBusinessCard?: DigitalBusinessCardUpdateOneWithoutQrCodeNestedInput
   }
 
   export type QRCodeUncheckedUpdateWithoutUserInput = {
@@ -20585,6 +21069,7 @@ export namespace Prisma {
     download_count?: IntFieldUpdateOperationsInput | number
     scanLogs?: ScanLogUncheckedUpdateManyWithoutQRCodeNestedInput
     downloadLogs?: DownloadLogUncheckedUpdateManyWithoutQRCodeNestedInput
+    digitalBusinessCard?: DigitalBusinessCardUncheckedUpdateOneWithoutQrCodeNestedInput
   }
 
   export type QRCodeUncheckedUpdateManyWithoutUserInput = {
@@ -20693,6 +21178,8 @@ export namespace Prisma {
   }
 
   export type DigitalBusinessCardUpdateWithoutUserInput = {
+    template?: StringFieldUpdateOperationsInput | string
+    qrCodePath?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     title?: NullableStringFieldUpdateOperationsInput | string | null
     company?: NullableStringFieldUpdateOperationsInput | string | null
@@ -20703,18 +21190,23 @@ export namespace Prisma {
     about?: NullableStringFieldUpdateOperationsInput | string | null
     pronoun?: NullableStringFieldUpdateOperationsInput | string | null
     accreditations?: NullableStringFieldUpdateOperationsInput | string | null
+    profileUrl?: NullableStringFieldUpdateOperationsInput | string | null
     theme?: NullableStringFieldUpdateOperationsInput | string | null
     primaryColor?: NullableStringFieldUpdateOperationsInput | string | null
     secondaryColor?: NullableStringFieldUpdateOperationsInput | string | null
-    fieldIcons?: NullableJsonNullValueInput | InputJsonValue
     activeFields?: NullableJsonNullValueInput | InputJsonValue
     fieldData?: NullableJsonNullValueInput | InputJsonValue
+    published?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    qrCode?: QRCodeUpdateOneRequiredWithoutDigitalBusinessCardNestedInput
   }
 
   export type DigitalBusinessCardUncheckedUpdateWithoutUserInput = {
     id?: IntFieldUpdateOperationsInput | number
+    uniqueCode?: StringFieldUpdateOperationsInput | string
+    template?: StringFieldUpdateOperationsInput | string
+    qrCodePath?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     title?: NullableStringFieldUpdateOperationsInput | string | null
     company?: NullableStringFieldUpdateOperationsInput | string | null
@@ -20725,18 +21217,22 @@ export namespace Prisma {
     about?: NullableStringFieldUpdateOperationsInput | string | null
     pronoun?: NullableStringFieldUpdateOperationsInput | string | null
     accreditations?: NullableStringFieldUpdateOperationsInput | string | null
+    profileUrl?: NullableStringFieldUpdateOperationsInput | string | null
     theme?: NullableStringFieldUpdateOperationsInput | string | null
     primaryColor?: NullableStringFieldUpdateOperationsInput | string | null
     secondaryColor?: NullableStringFieldUpdateOperationsInput | string | null
-    fieldIcons?: NullableJsonNullValueInput | InputJsonValue
     activeFields?: NullableJsonNullValueInput | InputJsonValue
     fieldData?: NullableJsonNullValueInput | InputJsonValue
+    published?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type DigitalBusinessCardUncheckedUpdateManyWithoutUserInput = {
     id?: IntFieldUpdateOperationsInput | number
+    uniqueCode?: StringFieldUpdateOperationsInput | string
+    template?: StringFieldUpdateOperationsInput | string
+    qrCodePath?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     title?: NullableStringFieldUpdateOperationsInput | string | null
     company?: NullableStringFieldUpdateOperationsInput | string | null
@@ -20747,12 +21243,13 @@ export namespace Prisma {
     about?: NullableStringFieldUpdateOperationsInput | string | null
     pronoun?: NullableStringFieldUpdateOperationsInput | string | null
     accreditations?: NullableStringFieldUpdateOperationsInput | string | null
+    profileUrl?: NullableStringFieldUpdateOperationsInput | string | null
     theme?: NullableStringFieldUpdateOperationsInput | string | null
     primaryColor?: NullableStringFieldUpdateOperationsInput | string | null
     secondaryColor?: NullableStringFieldUpdateOperationsInput | string | null
-    fieldIcons?: NullableJsonNullValueInput | InputJsonValue
     activeFields?: NullableJsonNullValueInput | InputJsonValue
     fieldData?: NullableJsonNullValueInput | InputJsonValue
+    published?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }

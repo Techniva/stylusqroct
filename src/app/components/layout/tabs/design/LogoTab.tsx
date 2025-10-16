@@ -130,7 +130,7 @@ const LogoTab: React.FC<LogoTabProps> = ({ qrSettings, onSettingsChange, user })
                 <button
                   onClick={() => logoInputRef.current?.click()}
                   disabled={isUploadingLogo}
-                  className="bg-[#063970] text-white px-4 py-2 rounded-full text-sm"
+                  className="bg-[#063970] text-white px-4 py-2 rounded-full text-xs"
                 >
                   {isUploadingLogo ? "Uploading..." : "Upload Logo"}
                 </button>
@@ -185,7 +185,7 @@ const LogoTab: React.FC<LogoTabProps> = ({ qrSettings, onSettingsChange, user })
                 <button
                   onClick={() => bgInputRef.current?.click()}
                   disabled={isUploadingBg}
-                  className="bg-[#063970] text-white px-4 py-2 rounded-full text-sm"
+                  className="bg-[#063970] text-white px-4 py-2 rounded-full text-xs"
                 >
                   {isUploadingBg ? "Uploading..." : "Upload Background"}
                 </button>

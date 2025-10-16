@@ -4,6 +4,10 @@ import { User, Briefcase, Building2, Award, FileText } from "lucide-react";
 
 type CardInfo = {
   name: string;
+  phone: string;
+  email: string;
+  address: string;
+  website: string;
   title: string;
   company: string;
   about: string;

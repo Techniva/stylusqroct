@@ -16,15 +16,30 @@
       "static/chunks/main-app.js",
       "static/chunks/app/api/auth/user/route.js"
     ],
-    "/industry/restaurants/page": [
+    "/api/auth/login/route": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/industry/restaurants/page.js"
+      "static/chunks/app/api/auth/login/route.js"
     ],
     "/digital-business-cards/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/digital-business-cards/page.js"
+    ],
+    "/industry/restaurants/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/industry/restaurants/page.js"
+    ],
+    "/contact/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/contact/page.js"
+    ],
+    "/dashboard/layout": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/dashboard/layout.js"
     ],
     "/dashboard/page": [
       "static/chunks/webpack.js",
@@ -46,40 +61,62 @@
       "static/chunks/main-app.js",
       "static/chunks/app/api/qr/scan-counts/route.js"
     ],
-    "/api/qr/stats/route": [
+    "/dashboard/myqrcodes/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/api/qr/stats/route.js"
+      "static/chunks/app/dashboard/myqrcodes/page.js"
     ],
-    "/api/qr/recent-activity/route": [
+    "/digital-business-cards/create/layout": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/api/qr/recent-activity/route.js"
+      "static/chunks/app/digital-business-cards/create/layout.js"
     ],
-    "/api/qr/downloads-count/route": [
+    "/digital-business-cards/create/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/api/qr/downloads-count/route.js"
-    ],
-    "/api/qr/mobile-scan-counts/route": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/api/qr/mobile-scan-counts/route.js"
-    ],
-    "/api/qr/scan-locations/route": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/api/qr/scan-locations/route.js"
+      "static/css/app/digital-business-cards/create/page.css",
+      "static/chunks/app/digital-business-cards/create/page.js"
     ],
     "/api/digital-business-cards/route": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/api/digital-business-cards/route.js"
     ],
-    "/digital-business-cards/create/page": [
+    "/digital-business-cards/create/my-cards/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/digital-business-cards/create/page.js"
+      "static/chunks/app/digital-business-cards/create/my-cards/page.js"
+    ],
+    "/api/digital-business-cards/my-cards/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/api/digital-business-cards/my-cards/route.js"
+    ],
+    "/visiting-card/vc/layout": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/css/app/visiting-card/vc/layout.css",
+      "static/chunks/app/visiting-card/vc/layout.js"
+    ],
+    "/visiting-card/vc/create/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/visiting-card/vc/create/page.js"
+    ],
+    "/api/visiting-card/get-dbccard/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/api/visiting-card/get-dbccard/route.js"
+    ],
+    "/api/visiting-card/stickers/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/api/visiting-card/stickers/route.js"
+    ],
+    "/_not-found/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/_not-found/page.js"
     ]
   }
 }

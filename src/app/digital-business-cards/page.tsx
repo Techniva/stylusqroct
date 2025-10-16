@@ -2,19 +2,27 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import Header from "@/app/components/layout/Header";
-import Footer from "@/app/components/layout/Footer";
 import FlipCard from "../components/ui/FlipCard";
 import AuthModal from "@/app/components/auth/AuthModal";
 import Breadcrumbs from "../components/ui/Breadcrumbs";
 import HeroMotionCard from "../components/ui/HeroMotionCard";
+import LoginCheckModal from "../components/auth/LoginCheckModal";
+import { motion } from "framer-motion";
 
 export default function DigitalBusinessCardsPage() {
   const router = useRouter();
+
+  // -------------------------------
+  // State
+  // -------------------------------
   const [user, setUser] = useState<any>(null);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [authMode, setAuthMode] = useState<"login" | "register">("register");
+  const [showLoginCheckModal, setShowLoginCheckModal] = useState(false);
 
+  // -------------------------------
+  // Fetch user and listen for auth changes
+  // -------------------------------
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -35,45 +43,59 @@ export default function DigitalBusinessCardsPage() {
 
     const handleAuthChange = () => fetchUser();
     window.addEventListener("authStateChanged", handleAuthChange);
-    return () => window.removeEventListener("authStateChanged", handleAuthChange);
+
+    // Listen to modal switch events from AuthModal
+    const handleOpenAuthModal = (e: CustomEvent) => {
+      setShowAuthModal(false); // close any current modal
+      setTimeout(() => {
+        setAuthMode(e.detail.mode); // switch mode
+        setShowAuthModal(true);    // reopen modal
+      }, 50); // short delay for animation
+    };
+    window.addEventListener("openAuthModal", handleOpenAuthModal as EventListener);
+
+    return () => {
+      window.removeEventListener("authStateChanged", handleAuthChange);
+      window.removeEventListener("openAuthModal", handleOpenAuthModal as EventListener);
+    };
   }, []);
 
+  // -------------------------------
+  // Handle "Get Started"
+  // -------------------------------
   const handleGetStarted = () => {
     if (user) {
       router.push("/dashboard");
     } else {
-      setAuthMode("login");
-      setShowAuthModal(true);
+      setShowLoginCheckModal(true);
     }
   };
 
-
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
-      <Header />
+    <div className="min-h-screen bg-gray-50 flex flex-col pt-16">
       <main className="flex-1">
-         {/* Breadcrumbs */}
-          <div className="max-w-6xl mx-auto px-6 mt-4">
-            <Breadcrumbs
-              items={[
-                { label: "Home", href: "/" },
-                { label: "Digital Business Cards" }, // current page, no href                
-              ]}
-            />
-          </div>
-          
-          {/* Hero Section */}
-          <HeroMotionCard
-            title="Digital Business Cards with QR Codes"
-            description="Share your contact details instantly with smart, eco-friendly digital business cards."
-            buttonText="Get Started Free"
-            buttonOnClick={handleGetStarted} // ✅ works
-            image="/web-image/stylusqr-business-card.png"
-            bgClassName="bg-gradient-to-br from-[#021B35] via-[#032544] to-[#041E30] py-12"
-            buttonClassName="inline-block bg-white text-[#063970] px-8 py-3 rounded-full font-semibold shadow-lg hover:bg-gray-100 hover:shadow-xl transition"
+        {/* Breadcrumbs */}
+        <div className="max-w-6xl mx-auto px-6 mt-4">
+          <Breadcrumbs
+            items={[
+              { label: "Home", href: "/" },
+              { label: "Digital Business Cards" },
+            ]}
+          />
+        </div>
+
+        {/* Hero Section */}
+        <HeroMotionCard
+          title="Digital Business Cards with QR Codes"
+          description="Share your contact details instantly with smart, eco-friendly digital business cards."
+          buttonText="Get Started Free"
+          buttonOnClick={handleGetStarted}
+          image="/web-image/stylusqr-business-card.png"
+          bgClassName="bg-gradient-to-br from-[#1E0B37] via-[#3B1C5B] to-[#5B21B6] py-12"
+          buttonClassName="inline-block bg-gradient-to-r from-[#E879F9] to-[#8B5CF6] text-white px-8 py-3 rounded-full font-semibold shadow-lg hover:shadow-xl hover:scale-105 transition"
           />
 
-        {/* Features Section with Flip Cards */}
+        {/* Features Section */}
         <section className="max-w-6xl mx-auto px-6 pt-12 pb-16">
           <h2 className="text-3xl md:text-4xl font-bold text-center text-[#063970] mb-14">
             Why Choose QR Code Business Cards?
@@ -104,27 +126,65 @@ export default function DigitalBusinessCardsPage() {
         </section>
 
         {/* Call to Action */}
-        <section className="bg-[#063970] py-12">
+        <motion.section
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          viewport={{ once: true }}
+          className="bg-gradient-to-br from-[#1E0B37] via-[#3B1C5B] to-[#5B21B6] py-16"
+        >
           <div className="max-w-2xl mx-auto text-center px-6">
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              className="text-3xl md:text-4xl font-bold text-white mb-6"
+            >
               Ready to Upgrade Your Networking?
-            </h2>
-            <p className="text-white text-lg mb-8">
-              Create your personalized QR code business card today. Share it
-              anywhere, anytime.
-            </p>
-            <button
+            </motion.h2>
+            
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="text-white text-lg mb-8"
+            >
+              Create your personalized QR code business card today. Share it anywhere, anytime.
+            </motion.p>
+
+            <motion.button
               onClick={handleGetStarted}
-              className="inline-block bg-white text-[#063970] px-8 py-4 rounded-full font-semibold shadow-md hover:bg-gray-100 transition"
+              whileHover={{ scale: 1.05 }}
+              className="inline-block bg-gradient-to-r from-[#E879F9] to-[#8B5CF6] text-white px-8 py-3 rounded-full font-semibold shadow-lg hover:shadow-xl transition"
             >
               Create Your Free Digital Card
-            </button>
+            </motion.button>
           </div>
-        </section>
-      </main>
-      <Footer />
+        </motion.section>
 
-      {/* Auth Modal */}
+      </main>
+
+      {/* -------------------------------
+          Login + Register Check Modal
+      ------------------------------- */}
+      <LoginCheckModal
+          isOpen={showLoginCheckModal}
+          onClose={() => setShowLoginCheckModal(false)}
+          onLogin={() => {
+            setShowLoginCheckModal(false);
+            setAuthMode("login");
+            setShowAuthModal(true);
+          }}
+          onRegister={() => {
+            setShowLoginCheckModal(false);
+            setAuthMode("register");
+            setShowAuthModal(true);
+          }}
+        />
+
+      {/* -------------------------------
+          Auth Modal
+      ------------------------------- */}
       <AuthModal
         isOpen={showAuthModal}
         onClose={() => setShowAuthModal(false)}

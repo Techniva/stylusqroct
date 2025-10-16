@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Crown } from "lucide-react";
-import Link from "next/link";
 import PaymentModal from "./PaymentModal";
 
 interface Stat {

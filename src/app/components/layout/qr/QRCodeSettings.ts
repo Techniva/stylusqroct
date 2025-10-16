@@ -50,5 +50,14 @@ export interface QRCodeSettings {
     address?: string;
     website?: string;
   };
+  businesscard?: {
+    name?: string;
+    phone?: string;
+    email?: string;
+    company?: string;
+    title?: string;
+    address?: string;
+    website?: string;
+  };
   // ...etc for other types
 }

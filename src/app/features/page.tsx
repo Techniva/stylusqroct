@@ -1,13 +1,9 @@
-import Header from "@/app/components/layout/Header";
-import Footer from "@/app/components/layout/Footer";
-import Body from "@/app/components/layout/Body";
+
 import React from 'react';
 
 export default function FeaturesPage() {
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50">
-      <Header />
-      <Body>
+    <div className="flex flex-col min-h-screen bg-gray-50 pt-16">
         <div className="max-w-3xl mx-auto py-12 px-4">
           <h1 className="text-3xl font-bold mb-4 text-[#063970]">Features</h1>
           <p className="mb-8 text-gray-700 text-lg">Discover what makes StylusQR powerful and easy to use.</p>
@@ -42,8 +38,6 @@ export default function FeaturesPage() {
             </div>
           </div>
         </div>
-      </Body>
-      <Footer />
     </div>
   );
 } 

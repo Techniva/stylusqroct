@@ -1,3 +1,4 @@
+//src/app/api/auth/login/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '@/generated/prisma';
 import bcrypt from 'bcryptjs';

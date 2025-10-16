@@ -1,4 +1,4 @@
-// File: /Users/sunilkumarprajapati/Downloads/python/stylusqr1/src/app/api/qr/dashboard-stats/route.ts
+// File: /Users/sunilkumarprajapati/Downloads/python/stylusqr/src/app/api/qr/dashboard-stats/route.ts
 import * as entry from '../../../../../../src/app/api/qr/dashboard-stats/route.js'
 import type { NextRequest } from 'next/server.js'
 

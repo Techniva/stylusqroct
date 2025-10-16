@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Download, RefreshCw, Save, Lock } from "lucide-react";
 import QRCodeStyling from "qr-code-styling";
-
+import { useRouter } from "next/navigation";
 
 import { QRCodeSettings } from "@/app/components/layout/qr/QRCodeSettings";
 import { formatQRDataToURL, createQRData, parseUserInput, QRType } from "../../../lib/qrDataUtils";
@@ -19,6 +19,7 @@ interface QRCodePreviewProps {
   settings?: QRCodeSettings;
   user?: UserData | null;
   refreshQRStats?: () => void;
+  onReset?: () => void;
 }
 
 const QRCodePreview: React.FC<QRCodePreviewProps> = ({
@@ -44,16 +45,13 @@ const QRCodePreview: React.FC<QRCodePreviewProps> = ({
     dataType: undefined
   },
   user = null,
-  refreshQRStats
+  refreshQRStats, onReset
 }) => {
   // Debug received settings
-  console.log('=== QRCODE PREVIEW RECEIVED SETTINGS ===');
- 
-  
+  //console.log('=== QRCODE PREVIEW RECEIVED SETTINGS ===');
   // Monitor settings changes
   useEffect(() => {
-    console.log('=== SETTINGS CHANGE DETECTED ===');
-   
+    //console.log('=== SETTINGS CHANGE DETECTED ===');
   }, [settings.logoImage]);
 
   const qrRef = useRef<HTMLDivElement>(null);
@@ -62,18 +60,23 @@ const QRCodePreview: React.FC<QRCodePreviewProps> = ({
   const [saveMessage, setSaveMessage] = useState('');
   const [showConfirmPopup, setShowConfirmPopup] = useState(false);
   const [shouldBlur, setShouldBlur] = useState(false);
-  // Add a state to track if a businesscard QR was just created
   const [businesscardCreated, setBusinesscardCreated] = useState(false);
+  const [resetTrigger, setResetTrigger] = useState(0);
 
+  const router = useRouter();
   // Extend blurState logic to handle other data types
   useEffect(() => {
     let blurState = false;
 
     switch (settings.dataType) {
-      case 'vcard':
-      case 'businesscard': {
+      case 'vcard': {
         const vcard = settings.vcard || {};
         blurState = !vcard.name?.trim() || !vcard.phone?.trim() || !vcard.email?.trim();
+        break;
+      }
+      case 'businesscard': {
+        const businesscard = settings.businesscard || {};
+        blurState = !businesscard.name?.trim() || !businesscard.phone?.trim() || !businesscard.email?.trim();
         break;
       }
       case 'wifi': {
@@ -227,25 +230,31 @@ const QRCodePreview: React.FC<QRCodePreviewProps> = ({
       qrRef.current.innerHTML = "";
       let displayData = settings.url && settings.url.trim() !== '' ? settings.url : 'https://example.com';
       
-      // Format the URL/data based on the data type using JSON structure
-      if (settings.dataType) {
-        try {
-          let qrData;
-          if (settings.dataType === 'vcard' || settings.dataType === 'businesscard') {
-            // For vCard, use the vcard object
-            const typeToUse = settings.dataType as QRType;
-            qrData = createQRData(typeToUse, settings.vcard || {});
-            displayData = formatQRDataToURL(qrData);
-          } else if (settings.url) {
-            qrData = createQRData(settings.dataType as QRType, parseUserInput(settings.dataType as QRType, settings.url));
-            displayData = formatQRDataToURL(qrData);
-          }
-        } catch (error) {
-          console.warn('Failed to format QR data:', error);
-          // Fallback to original URL
-          displayData = settings.url && settings.url.startsWith('http') ? settings.url : `https://${settings.url}`;
+    // Format the URL/data based on the data type using JSON structure
+    if (settings.dataType) {
+      try {
+        let qrData;
+
+        if (settings.dataType === 'vcard') {
+          qrData = createQRData('vcard', settings.vcard || {});
+          displayData = formatQRDataToURL(qrData);
+        } else if (settings.dataType === 'businesscard') {
+          qrData = createQRData('businesscard', settings.businesscard || {});
+          displayData = formatQRDataToURL(qrData);
         }
+         else if (settings.url) {
+          // Other QR types
+          qrData = createQRData(settings.dataType as QRType, parseUserInput(settings.dataType as QRType, settings.url));
+          displayData = formatQRDataToURL(qrData);
+        }
+
+      } catch (error) {
+        console.warn('Failed to format QR data:', error);
+        // Fallback to original URL
+        displayData = settings.url && settings.url.startsWith('http') ? settings.url : `https://${settings.url}`;
       }
+    }
+
       
       if (!displayData || displayData.trim() === '') {
         const size = settings.qrCodeShape !== 'square' ? 240 : 280;
@@ -376,8 +385,10 @@ const QRCodePreview: React.FC<QRCodePreviewProps> = ({
       // Create structured QR data
       const qrType = settings.dataType as QRType || 'website';
       let qrData;
-      if (qrType === 'vcard' || qrType === 'businesscard') {
+      if (qrType === 'vcard') {
         qrData = settings.vcard || {};
+      } else if (qrType === 'businesscard') {
+        qrData = settings.businesscard || {};
       } else if (qrType === 'wifi') {
         qrData = settings.wifi || {};
       } else {
@@ -420,8 +431,14 @@ const QRCodePreview: React.FC<QRCodePreviewProps> = ({
         setIsSaving(false);
         return;
       }
-      const createdQR = await createRes.json();
-      const serverLink = createdQR.serverLink;
+     // ✅ INSERT HERE
+          const createdQR = await createRes.json();
+          const serverLink = createdQR.serverLink;
+
+          // Save uniqueCode in state
+          if (createdQR.uniqueCode) {
+            setUniqueCode(createdQR.uniqueCode);
+          }
       
       // 2. Generate the QR code image with the server link and frame
       let qrSettings = {
@@ -483,13 +500,12 @@ const QRCodePreview: React.FC<QRCodePreviewProps> = ({
       }
       
       const uploadedQR = await uploadRes.json();
-      
+      if (onReset) onReset();
       setSaveMessage('QR code created successfully!');
       setIsSaving(false);
       if (qrType === 'businesscard') {
         setBusinesscardCreated(true);
       }
-      
       // Refresh QR stats if callback provided
       if (refreshQRStats) {
         refreshQRStats();
@@ -521,64 +537,19 @@ const QRCodePreview: React.FC<QRCodePreviewProps> = ({
     return `${baseClasses} ${sizeClasses}`;
   };
 
-  
-
   const getQRCodeShapeStyle = () => {
     const size = settings.frameStyle && settings.frameStyle !== 'none' ? 300 : 280;
-    
-    switch (settings.qrCodeShape) {
-      case 'circle':
-        return {
-          width: `${size}px`,
-          height: `${size}px`,
-          borderRadius: '50%',
-          overflow: 'hidden',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center'
-        };
-      case 'rounded':
-        return {
-          width: `${size}px`,
-          height: `${size}px`,
-          borderRadius: '20px',
-          overflow: 'hidden',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center'
-        };
-      case 'hexagon':
-        return {
-          width: `${size}px`,
-          height: `${size}px`,
-          clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)',
-          overflow: 'hidden',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center'
-        };
-      case 'octagon':
-        return {
-          width: `${size}px`,
-          height: `${size}px`,
-          clipPath: 'polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%)',
-          overflow: 'hidden',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center'
-        };
-      default: // square
-        return {
-          width: `${size}px`,
-          height: `${size}px`,
-          borderRadius: '8px',
-          overflow: 'hidden',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center'
-        };
-    }
-  };
+  
+    return {
+      width: `${size}px`,
+      height: `${size}px`,
+      borderRadius: '8px',
+      overflow: 'hidden',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center'
+    };
+  };  
 
   const getFrameTextSizeClass = () => {
     switch (settings.frameTextSize) {
@@ -589,8 +560,6 @@ const QRCodePreview: React.FC<QRCodePreviewProps> = ({
       default: return 'text-sm';
     }
   };
-
-
 
   const createQRWithFrame = async (qrBlob: Blob, settings: QRCodeSettings): Promise<Blob> => {
     return new Promise((resolve, reject) => {
@@ -696,6 +665,8 @@ const QRCodePreview: React.FC<QRCodePreviewProps> = ({
     });
   };
 
+  const [uniqueCode, setUniqueCode] = useState<string | null>(null);
+
   return (
     <div className="bg-white rounded-xl shadow p-6 space-y-6 min-h-[525px]">
       {/* Header */}
@@ -733,8 +704,7 @@ const QRCodePreview: React.FC<QRCodePreviewProps> = ({
                 height: '100%',
                 objectFit: 'cover',
                 zIndex: 0,
-                borderRadius: getQRCodeShapeStyle().borderRadius || undefined,
-                clipPath: getQRCodeShapeStyle().clipPath || undefined,
+                borderRadius: getQRCodeShapeStyle().borderRadius || undefined,                
                 top: 0,
                 left: 0
               }}
@@ -762,7 +732,6 @@ const QRCodePreview: React.FC<QRCodePreviewProps> = ({
                 style={{
                   borderColor: settings.frameColor || '#000000',
                   borderRadius: getQRCodeShapeStyle().borderRadius || undefined,
-                  clipPath: getQRCodeShapeStyle().clipPath || undefined,
                   zIndex: 2
                 }}
               />
@@ -790,63 +759,65 @@ const QRCodePreview: React.FC<QRCodePreviewProps> = ({
       {/* Action Buttons */}
       <div className="space-y-3">
         {user ? (
-          <button
-            onClick={handleCreateQRClick}
-            disabled={isSaving || ((settings.dataType === 'vcard' || settings.dataType === 'businesscard')
-              ? !(settings.vcard && settings.vcard.name && settings.vcard.name.trim() && settings.vcard.phone && settings.vcard.phone.trim() && settings.vcard.email && settings.vcard.email.trim())
-              : settings.dataType === 'wifi'
-                ? !(settings.wifi && settings.wifi.ssid && settings.wifi.ssid.trim())
-                : !settings.url || settings.url.trim() === '')}
-            className="w-full bg-[#063970] text-white py-3 px-4 rounded-full hover:bg-[#052a5a] disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
-          >
-            {isSaving ? (
-              <>
-                <RefreshCw size={18} className="animate-spin" />
-                Creating...
-              </>
-            ) : (
-              <>
-                <Save size={18} />
-                Create QR Code
-              </>
-            )}
-          </button>
-        ) : (
-          <button
-            disabled={true}
-            className="w-full bg-gray-400 text-white py-3 px-4 rounded-full opacity-50 cursor-not-allowed transition-colors flex items-center justify-center gap-2"
-          >
-            <Lock size={18} />
-            Create QR Code
-          </button>
-        )}
+            <button
+              onClick={handleCreateQRClick}
+              disabled={isSaving || (
+                (settings.dataType === 'vcard' || settings.dataType === 'businesscard')
+                  ? !(
+                      (settings.dataType === 'vcard' && settings.vcard?.name?.trim() && settings.vcard?.phone?.trim() && settings.vcard?.email?.trim()) ||
+                      (settings.dataType === 'businesscard' && settings.businesscard?.name?.trim() && settings.businesscard?.phone?.trim() && settings.businesscard?.email?.trim())
+                    )
+                  : settings.dataType === 'wifi'
+                  ? !(settings.wifi && settings.wifi.ssid?.trim())
+                  : !settings.url || settings.url.trim() === ''
+              )}
+              className="w-full bg-[#063970] text-white py-3 px-4 rounded-full hover:bg-[#052a5a] disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+            >
+              {isSaving ? (
+                <>
+                  <RefreshCw size={18} className="animate-spin" />
+                  Creating...
+                </>
+              ) : (
+                <>
+                  <Save size={18} />
+                  Create QR Code
+                </>
+              )}
+            </button>
+          ) : (
+            <button
+              disabled={true}
+              className="w-full bg-gray-400 text-white py-3 px-4 rounded-full opacity-50 cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+            >
+              <Lock size={18} />
+              Create QR Code
+            </button>
+          )}
 
         {/* Customize DBC button: show if businesscardCreated and dataType is businesscard */}
-        {(businesscardCreated && settings.dataType === 'businesscard') && (
+        {businesscardCreated && settings.dataType === 'businesscard' && (
+          
           <button
-            className="w-full bg-green-600 text-white py-3 px-4 rounded-full hover:bg-green-700 transition-colors flex items-center justify-center gap-2"
-            style={{ marginTop: '0.5rem' }}
-            onClick={() => {
-              // Save businesscard info and uniqueCode to sessionStorage
-              const vcard = settings.vcard || {};
-              const uniqueCode = (typeof saveMessage === 'string' && saveMessage.includes('uniqueCode:'))
-                ? saveMessage.split('uniqueCode:')[1].split(' ')[0]
-                : null;
-              // If uniqueCode is not in saveMessage, try to get from last created QR (if available)
-              // You may need to adjust this logic if you have the uniqueCode elsewhere
-              sessionStorage.setItem('dbc_prefill', JSON.stringify({
-                vcard,
-                uniqueCode: uniqueCode
-              }));
-              window.location.href = '/digital-business-cards/create';
-            }}
-          >
-            Customize DBC
-          </button>
-        )}
-    
-
-
+              className="w-full bg-green-600 text-white py-3 px-4 rounded-full hover:bg-green-700 transition-colors flex items-center justify-center gap-2"
+              style={{ marginTop: '0.5rem' }}
+              onClick={() => {
+                if (!uniqueCode) {
+                  console.error("No uniqueCode available");
+                  return;
+                }
+            
+                // Build query parameters
+                const params = new URLSearchParams();
+                params.set("uniqueCode", uniqueCode);
+            
+                // Navigate client-side with query parameters
+                router.push(`/digital-business-cards/create?${params.toString()}`);
+              }}
+            >
+              Customize DBC
+            </button>
+          )}
         
         {/* Save Message */}
         {saveMessage && (

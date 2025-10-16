@@ -86,6 +86,15 @@ export async function GET(
       }
     });
 
+    // --- ✅ NEW LOGIC ---
+    const qrData = qrCode.qrData as any; // cast Json → any
+    if (qrData?.type === 'businesscard') {
+      // For business cards → go to public page
+      const cardUrl = `${request.nextUrl.origin}/dbc/${uniqueCode}`;
+      console.log('Redirecting to business card page:', cardUrl);
+      return NextResponse.redirect(cardUrl);
+    }
+
     // Extract URL from qrData
     const redirectUrl = formatQRDataToURL(qrCode.qrData as any);
     console.log('QR code found, redirecting to:', redirectUrl);

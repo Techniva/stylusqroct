@@ -134,16 +134,16 @@ export interface TextQRData extends QRDataBase {
   };
 }
 
-export interface businesscard extends QRDataBase {
+export interface BusinessCardQRData extends QRDataBase {
   type: 'businesscard';
   data: {
     name: string;
-    phone?: string;
-    email?: string;
     company?: string;
     title?: string;
-    address?: string;
+    phone?: string;
+    email?: string;    
     website?: string;
+    address?: string;
   };
 }
 
@@ -162,7 +162,7 @@ export type QRData =
   | TwitterQRData 
   | FacebookQRData 
   | TextQRData
-  | businesscard;
+  | BusinessCardQRData;
 
 // QR Code Type Configurations
 export const QR_TYPE_CONFIGS = {
@@ -334,22 +334,38 @@ export function formatQRDataToURL(qrData: QRData): string {
       const { ssid: wifiSsid, password: wifiPassword = '', encryption: wifiEncryption = 'WPA' } = qrData.data;
       return `WIFI:T:${wifiEncryption};S:${wifiSsid};P:${wifiPassword};;`;
     
-    case 'vcard':
-    case 'businesscard':
+    case 'vcard': {
       const vcardData = [
-        'BEGIN:VCARD',
-        'VERSION:3.0',
+        "BEGIN:VCARD",
+        "VERSION:3.0",
         `FN:${qrData.data.name}`,
-        qrData.data.phone ? `TEL:${qrData.data.phone}` : '',
-        qrData.data.email ? `EMAIL:${qrData.data.email}` : '',
-        qrData.data.company ? `ORG:${qrData.data.company}` : '',
-        qrData.data.title ? `TITLE:${qrData.data.title}` : '',
-        qrData.data.address ? `ADR:;;${qrData.data.address}` : '',
-        qrData.data.website ? `URL:${qrData.data.website}` : '',
-        'END:VCARD'
-      ].filter(line => line).join('\n');
+        qrData.data.phone ? `TEL:${qrData.data.phone}` : "",
+        qrData.data.email ? `EMAIL:${qrData.data.email}` : "",
+        qrData.data.company ? `ORG:${qrData.data.company}` : "",
+        qrData.data.title ? `TITLE:${qrData.data.title}` : "",
+        qrData.data.address ? `ADR:;;${qrData.data.address}` : "",
+        qrData.data.website ? `URL:${qrData.data.website}` : "",
+        "END:VCARD",
+      ].filter(Boolean).join("\n");
       return `data:text/vcard;charset=utf-8,${encodeURIComponent(vcardData)}`;
-    
+    }
+
+    case 'businesscard': {
+      const bcData = [
+        "BEGIN:VCARD",
+        "VERSION:3.0",
+        `FN:${qrData.data.name}`,
+        qrData.data.phone ? `TEL:${qrData.data.phone}` : "",
+        qrData.data.email ? `EMAIL:${qrData.data.email}` : "",
+        qrData.data.company ? `ORG:${qrData.data.company}` : "",
+        qrData.data.title ? `TITLE:${qrData.data.title}` : "",
+        qrData.data.address ? `ADR:;;${qrData.data.address}` : "",
+        qrData.data.website ? `URL:${qrData.data.website}` : "",
+        "END:VCARD",
+      ].filter(Boolean).join("\n");
+      return `data:text/vcard;charset=utf-8,${encodeURIComponent(bcData)}`;
+    }
+  
     case 'location':
       const { latitude: locLat, longitude: locLng } = qrData.data;
       return `geo:${locLat},${locLng}`;
@@ -443,19 +459,32 @@ export function parseUserInput(type: QRType, input: string): Record<string, any>
         encryption: encryption?.trim() || 'WPA' 
       };
     
-    case 'vcard':
-    case 'businesscard':
-      const [name, phone, vcardEmail, company, title, address, website] = input.split('|');
-      return { 
-        name: name?.trim(), 
-        phone: phone?.trim(), 
-        email: vcardEmail?.trim(), 
-        company: company?.trim(),
-        title: title?.trim(),
-        address: address?.trim(),
-        website: website?.trim()
+      case 'vcard': {
+        const [name, phone, email, company, title, address, website] = input.split('|');
+        return { 
+          name: name?.trim(),
+          phone: phone?.trim(),
+          email: email?.trim(),
+          company: company?.trim(),
+          title: title?.trim(),
+          address: address?.trim(),
+          website: website?.trim()
+        };
       };
-    
+      
+      case 'businesscard': {
+        const [name, phone, email, company, title, address, website] = input.split('|');
+        return { 
+          name: name?.trim(),
+          phone: phone?.trim(),
+          email: email?.trim(),
+          company: company?.trim(),
+          title: title?.trim(),
+          address: address?.trim(),
+          website: website?.trim()
+        };
+      }
+       
     case 'location':
       const [latCoord, lngCoord] = input.split(',').map(coord => parseFloat(coord.trim()));
       return { latitude: latCoord, longitude: lngCoord };

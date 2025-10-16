@@ -3,6 +3,7 @@
 import { useState } from "react";
 import React from "react";
 import { fieldIcons } from "./fieldIcons"; // ✅ central import
+import { Edit2, Trash2 } from "lucide-react";
 
 type FieldItem = {
   key: string;
@@ -143,11 +144,43 @@ export default function FieldsSettings({
           {activeFields.map((key) => (
             <div
               key={key}
-              className="flex items-center gap-2 bg-gray-100 p-2 rounded"
+              className="flex items-center gap-4 bg-gray-100 p-2 rounded"
             >
               {fieldIcons[key]}
-              <span className="font-medium">{fieldData[key]?.label}:</span>
-              <span>{fieldData[key]?.value}</span>
+              <div className="flex-1">
+                <span className="font-medium">{fieldData[key]?.label}:</span>{" "}
+                <span>{fieldData[key]?.value}</span>
+              </div>
+
+              {/* Edit Icon Button */}
+              <button
+                onClick={() => {
+                  const fieldItem = { key, label: key };
+                  setPopupField(fieldItem);
+                  setInputLabel(fieldData[key]?.label || "");
+                  setInputValue(fieldData[key]?.value || "");
+                  setInputSublabel(fieldData[key]?.sublabel || "");
+                }}
+                className="text-blue-500 hover:text-blue-700"
+                aria-label="Edit Field"
+              >
+                <Edit2 size={18} />
+              </button>
+
+              {/* Delete Icon Button */}
+              <button
+                onClick={() => {
+                  const updatedFields = activeFields.filter((f) => f !== key);
+                  const updatedData = { ...fieldData };
+                  delete updatedData[key];
+                  setActiveFields(updatedFields);
+                  setFieldData(updatedData);
+                }}
+                className="text-red-500 hover:text-red-700"
+                aria-label="Delete Field"
+              >
+                <Trash2 size={18} />
+              </button>
             </div>
           ))}
         </div>

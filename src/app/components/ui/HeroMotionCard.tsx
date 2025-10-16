@@ -1,14 +1,14 @@
 "use client";
 import { motion, Variants } from "framer-motion";
-import Link from "next/link"; // remove if not using Next.js
+import Link from "next/link";
 import { MouseEventHandler } from "react";
 
 interface HeroMotionCardProps {
   title: string;
   description: string;
   buttonText: string;
-  buttonLink?: string; // ✅ optional now
-  buttonOnClick?: MouseEventHandler<HTMLButtonElement>; // ✅ optional onClick
+  buttonLink?: string;
+  buttonOnClick?: MouseEventHandler<HTMLButtonElement>;
   image: string;
   reverse?: boolean;
   bgClassName?: string;
@@ -29,13 +29,13 @@ const textVariant: Variants = {
 };
 
 const imageVariant: Variants = {
-  hidden: { opacity: 0, scale: 0.9 },
+  hidden: { opacity: 0, scale: 0.95 },
   show: {
     opacity: 1,
     scale: 1,
     transition: {
       duration: 1,
-      ease: "easeInOut",
+      ease: "easeOut",
     },
   },
 };
@@ -45,7 +45,7 @@ export default function HeroMotionCard({
   description,
   buttonText,
   buttonLink,
-  buttonOnClick, // ✅ new
+  buttonOnClick,
   image,
   reverse = false,
   bgClassName = "bg-gradient-to-br from-[#7B2C2C] via-[#A83232] to-[#D94E2B] py-12",
@@ -106,17 +106,21 @@ export default function HeroMotionCard({
 
           {/* Image Section */}
           <motion.div
-            className="flex-1 flex justify-center"
+            className="flex-1 flex justify-center will-change-transform will-change-opacity"
             variants={imageVariant}
             initial="hidden"
             whileInView="show"
             viewport={{ once: true, amount: 0.2 }}
           >
-            <img
-              src={image}
-              alt={title}
-              className="w-full max-w-lg h-auto object-contain rounded-2xl shadow-2xl"
-            />
+            {/* Wrapper reserves space to prevent flicker */}
+            <div className="w-full max-w-lg aspect-[4/3] bg-gray-800 rounded-2xl overflow-hidden">
+              <img
+                src={image}
+                alt={title}
+                className="w-full h-full object-contain rounded-2xl shadow-2xl"
+                loading="lazy"
+              />
+            </div>
           </motion.div>
         </div>
       </div>

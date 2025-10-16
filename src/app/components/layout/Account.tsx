@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { User, Settings, Bell, Shield, Key, Mail, Phone, MapPin, Edit3, Save, X } from "lucide-react";
 import ChangePasswordModal from '../auth/ChangePasswordModal';
 import TwoFactorAuthModal from '../auth/TwoFactorAuthModal';
+import LoadingSpinner from "../ui/LoadingSpinner";
 
 const notificationSettings = [
   { name: "Email Notifications", key: "emailNotificationsEnabled", description: "Receive updates via email" },
@@ -15,6 +16,7 @@ const Account: React.FC = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [isChangePasswordOpen, setChangePasswordOpen] = useState(false);
   const [isTwoFactorAuthOpen, setTwoFactorAuthOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState({
     fullName: "",
     email: "",
@@ -51,6 +53,8 @@ const Account: React.FC = () => {
         }
       } catch (error) {
         console.error('Failed to fetch user data:', error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -92,7 +96,11 @@ const Account: React.FC = () => {
       // Optionally revert the state change on error
     }
   };
-
+  if (loading) {
+    return (
+        <LoadingSpinner />   
+    );
+  }
   return (
     <div className="space-y-6">
       {/* Header */}

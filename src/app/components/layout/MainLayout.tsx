@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { QRCodeSettings } from "@/app/components/layout/qr/QRCodeSettings";
 import TrustSection from "@/app/components/layout/TrustSection";
 import CreateQrCtaSection from "@/app/components/layout/CreateQrCtaSection";
 import CustomerFeedbackSection from "@/app/components/layout/CustomerFeedbackSection";
@@ -86,24 +85,25 @@ const MainLayout: React.FC = () => {
   // to prevent infinite loops and hook ordering issues
 
   return (
-    <div className="w-full flex flex-col gap-6">
-      <BestFreeQrSection />
+    <div className="pt-16">
+      
+      <div className="flex flex-col gap-6 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <BestFreeQrSection />
+          {/* Main Content: 2 columns */}
+          <QRCodePage user={user} />
 
+          {/* Trust/Marketing Section */}
+          <TrustSection />
 
-      {/* Main Content: 2 columns */}
-      <QRCodePage user={user} />
+          {/* CTA Section */}
+          <CreateQrCtaSection />
 
-      {/* Trust/Marketing Section */}
-      <TrustSection />
+          {/* Customer Feedback Section */}
+          <CustomerFeedbackSection />
 
-      {/* CTA Section */}
-      <CreateQrCtaSection />
-
-      {/* Customer Feedback Section */}
-      <CustomerFeedbackSection />
-
-      {/* Free QR Codes Section */}
-      <FreeQRCodesComponent />
+          {/* Free QR Codes Section */}
+          <FreeQRCodesComponent />
+      </div>
     </div>
   );
 };

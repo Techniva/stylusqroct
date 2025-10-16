@@ -119,6 +119,8 @@ model QRCode {
   scanLogs ScanLog[]
   download_count Int @default(0)
   downloadLogs DownloadLog[]
+   // Optional one-to-one relation (some QR codes won’t have business cards)
+  digitalBusinessCard DigitalBusinessCard?
 
   @@index([userId], map: "QRCode_userId_fkey")
   @@index([uniqueCode], map: "QRCode_uniqueCode_idx")
@@ -215,6 +217,11 @@ model DigitalBusinessCard {
   id             Int      @id @default(autoincrement())
   userId         Int
   user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  uniqueCode     String   @unique @default("TEMP_CODE")
+  qrCode QRCode @relation(fields: [uniqueCode], references: [uniqueCode], onDelete: Cascade)
+
+  template       String   @default("classic") // new column
+  qrCodePath     String   @default("")
   name           String
   title          String?
   company        String?
@@ -222,15 +229,16 @@ model DigitalBusinessCard {
   email          String?
   address        String?
   website        String?
-  about          String?
+  about          String?  @db.LongText
   pronoun        String?
   accreditations String?
+  profileUrl     String?
   theme          String?
   primaryColor   String?
   secondaryColor String?
-  fieldIcons     Json?
   activeFields   Json?
   fieldData      Json?
+  published      Boolean  @default(false)
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 

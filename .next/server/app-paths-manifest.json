@@ -1,16 +1,9 @@
 {
-  "/api/auth/user/route": "app/api/auth/user/route.js",
-  "/api/subscription/user-data/route": "app/api/subscription/user-data/route.js",
-  "/api/qr/scan-counts/route": "app/api/qr/scan-counts/route.js",
-  "/api/qr/stats/route": "app/api/qr/stats/route.js",
-  "/api/qr/recent-activity/route": "app/api/qr/recent-activity/route.js",
-  "/api/qr/downloads-count/route": "app/api/qr/downloads-count/route.js",
-  "/api/qr/mobile-scan-counts/route": "app/api/qr/mobile-scan-counts/route.js",
-  "/api/qr/scan-locations/route": "app/api/qr/scan-locations/route.js",
-  "/api/digital-business-cards/route": "app/api/digital-business-cards/route.js",
-  "/page": "app/page.js",
-  "/industry/restaurants/page": "app/industry/restaurants/page.js",
-  "/digital-business-cards/page": "app/digital-business-cards/page.js",
+  "/api/visiting-card/stickers/route": "app/api/visiting-card/stickers/route.js",
+  "/_not-found/page": "app/_not-found/page.js",
+  "/digital-business-cards/create/page": "app/digital-business-cards/create/page.js",
+  "/dashboard/myqrcodes/page": "app/dashboard/myqrcodes/page.js",
+  "/digital-business-cards/create/my-cards/page": "app/digital-business-cards/create/my-cards/page.js",
   "/dashboard/page": "app/dashboard/page.js",
-  "/digital-business-cards/create/page": "app/digital-business-cards/create/page.js"
+  "/visiting-card/vc/create/page": "app/visiting-card/vc/create/page.js"
 }

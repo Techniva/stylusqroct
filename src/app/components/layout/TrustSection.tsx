@@ -1,5 +1,8 @@
+"use client";
+
 import React, { useState, useEffect } from "react";
 import AuthModal from "@/app/components/auth/AuthModal";
+import LoginCheckModal from "../auth/LoginCheckModal"; // adjust path
 
 const logos = [
   { src: "/trust-logo/coca-cola-client-logo.webp", alt: "Coca-Cola Logo", label: "Coca-Cola" },
@@ -12,21 +15,19 @@ const logos = [
 const TrustSection: React.FC = () => {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [authMode, setAuthMode] = useState<"login" | "register">("register");
+  const [showLoginCheckModal, setShowLoginCheckModal] = useState(false);
   const [showAlreadyJoinedMessage, setShowAlreadyJoinedMessage] = useState(false);
   const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
-    // Check if user is logged in by calling the API
     const fetchUser = async () => {
       try {
         const res = await fetch('/api/auth/user');
         if (res.ok) {
           const data = await res.json();
           setUser(data.user);
-          console.log('Auth check - user found:', data.user);
         } else {
           setUser(null);
-          console.log('Auth check - no user found');
         }
       } catch (error) {
         console.error('Error checking auth status:', error);
@@ -36,31 +37,23 @@ const TrustSection: React.FC = () => {
 
     fetchUser();
 
-    // Listen for auth state changes
-    const handleAuthChange = () => {
-      fetchUser();
-    };
-
+    const handleAuthChange = () => fetchUser();
     window.addEventListener('authStateChanged', handleAuthChange);
-
-    return () => {
-      window.removeEventListener('authStateChanged', handleAuthChange);
-    };
+    return () => window.removeEventListener('authStateChanged', handleAuthChange);
   }, []);
 
   const handleJoinClick = () => {
-    console.log('Join button clicked, user:', user);
     if (user) {
       setShowAlreadyJoinedMessage(true);
       setTimeout(() => setShowAlreadyJoinedMessage(false), 3000);
     } else {
-      setAuthMode("register");
-      setShowAuthModal(true);
+      setShowLoginCheckModal(true);
     }
   };
 
   return (
     <>
+      {/* Trust Section */}
       <section className="w-full bg-gradient-to-br from-[#312e81] via-[#4f46e5] to-[#7c3aed] rounded-xl shadow p-8 my-4 flex flex-col md:flex-row gap-8 items-center justify-between">
         {/* Left: Text */}
         <div className="flex-1 flex flex-col gap-4 min-w-[250px] items-start md:items-start">
@@ -72,10 +65,11 @@ const TrustSection: React.FC = () => {
               onClick={handleJoinClick}
               className="px-8 py-3 rounded-full bg-gradient-to-r from-[#4f46e5] to-[#7c3aed] text-white text-lg font-bold shadow hover:from-[#4338ca] hover:to-[#6d28d9] transition-colors"
             >
-              Join them now!     
+              Join them now!
             </button>
           </div>
         </div>
+
         {/* Right: Logos */}
         <div className="flex-1 flex flex-wrap justify-center items-center gap-6 min-w-[200px]">
           {logos.map((logo, idx) => (
@@ -89,14 +83,36 @@ const TrustSection: React.FC = () => {
         </div>
       </section>
 
-      {/* Auth Modal */}
+      {/* --------------------------
+          Login Check Modal
+      -------------------------- */}
+      <LoginCheckModal
+        isOpen={showLoginCheckModal}
+        onClose={() => setShowLoginCheckModal(false)}
+        onLogin={() => {
+          setShowLoginCheckModal(false);
+          setAuthMode("login");
+          setShowAuthModal(true);
+        }}
+        onRegister={() => {
+          setShowLoginCheckModal(false);
+          setAuthMode("register");
+          setShowAuthModal(true);
+        }}
+      />
+
+      {/* --------------------------
+          Auth Modal
+      -------------------------- */}
       <AuthModal
         isOpen={showAuthModal} 
         onClose={() => setShowAuthModal(false)} 
         mode={authMode} 
       />
 
-      {/* Already Joined Message */}
+      {/* --------------------------
+          Already Joined Message
+      -------------------------- */}
       {showAlreadyJoinedMessage && (
         <div className="fixed inset-0 flex items-center justify-center z-50 p-4">
           <div className="bg-black/80 backdrop-blur-sm absolute inset-0" onClick={() => setShowAlreadyJoinedMessage(false)}></div>
@@ -123,4 +139,4 @@ const TrustSection: React.FC = () => {
   );
 };
 
-export default TrustSection; 
+export default TrustSection;

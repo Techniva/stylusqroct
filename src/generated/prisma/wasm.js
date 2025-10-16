@@ -272,6 +272,9 @@ exports.Prisma.PaymentScalarFieldEnum = {
 exports.Prisma.DigitalBusinessCardScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
+  uniqueCode: 'uniqueCode',
+  template: 'template',
+  qrCodePath: 'qrCodePath',
   name: 'name',
   title: 'title',
   company: 'company',
@@ -282,12 +285,13 @@ exports.Prisma.DigitalBusinessCardScalarFieldEnum = {
   about: 'about',
   pronoun: 'pronoun',
   accreditations: 'accreditations',
+  profileUrl: 'profileUrl',
   theme: 'theme',
   primaryColor: 'primaryColor',
   secondaryColor: 'secondaryColor',
-  fieldIcons: 'fieldIcons',
   activeFields: 'activeFields',
   fieldData: 'fieldData',
+  published: 'published',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -403,6 +407,9 @@ exports.Prisma.PaymentOrderByRelevanceFieldEnum = {
 };
 
 exports.Prisma.DigitalBusinessCardOrderByRelevanceFieldEnum = {
+  uniqueCode: 'uniqueCode',
+  template: 'template',
+  qrCodePath: 'qrCodePath',
   name: 'name',
   title: 'title',
   company: 'company',
@@ -413,6 +420,7 @@ exports.Prisma.DigitalBusinessCardOrderByRelevanceFieldEnum = {
   about: 'about',
   pronoun: 'pronoun',
   accreditations: 'accreditations',
+  profileUrl: 'profileUrl',
   theme: 'theme',
   primaryColor: 'primaryColor',
   secondaryColor: 'secondaryColor'

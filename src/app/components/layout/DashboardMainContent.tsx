@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { ResponsiveLine } from '@nivo/line';
 
+interface DashboardMainContentProps {
+  user: { id: number; fullName: string; email: string }; // type as per your API
+}
+
 interface TopQrCode {
   id: number;
   scanCount: number;
@@ -26,46 +30,32 @@ interface SubscriptionData {
   subscriptionEnd?: string;
 }
 
-const DashboardMainContent: React.FC = () => {
+const DashboardMainContent: React.FC<DashboardMainContentProps> = ({ user }) => {
   const [last7Days, setLast7Days] = useState<{ [date: string]: number }>({});
   const [topQrCode, setTopQrCode] = useState<TopQrCode | null>(null);
   const [subscriptionData, setSubscriptionData] = useState<SubscriptionData | null>(null);
   const [monthlyScanCount, setMonthlyScanCount] = useState<number>(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
+  console.log('User in DashboardMainContent:', user);
   useEffect(() => {
     const fetchStats = async () => {
       setLoading(true);
       setError(null);
       try {
-        // Fetch user from API (cookie/session-based)
-        const userRes = await fetch('/api/auth/user');
-        if (!userRes.ok) {
-          setError('User not found');
-          setLoading(false);
-          return;
-        }
-        const userData = await userRes.json();
-        const userId = userData?.user?.id;
-        if (!userId) {
-          setError('User not found');
-          setLoading(false);
-          return;
-        }
-
+        const userId = user.id;
+  
         // Fetch dashboard stats
         const res = await fetch(`/api/qr/dashboard-stats?userId=${userId}`);
         if (!res.ok) throw new Error('Failed to fetch dashboard stats');
         const data = await res.json();
         setLast7Days(data.last7Days || {});
         setTopQrCode(data.topQrCode || null);
-
+  
         // Fetch monthly scan count
         const monthlyRes = await fetch(`/api/qr/scan-counts?userId=${userId}&period=month`);
         if (monthlyRes.ok) {
           const monthlyData = await monthlyRes.json();
-          console.log('Monthly scan count:', monthlyData.scanCount);
           setMonthlyScanCount(monthlyData.scanCount || 0);
         }
 
@@ -73,8 +63,6 @@ const DashboardMainContent: React.FC = () => {
         const subscriptionRes = await fetch('/api/subscription/user-data?t=' + Date.now());
         if (subscriptionRes.ok) {
           const subscriptionData = await subscriptionRes.json();
-          console.log('Dashboard subscription data:', subscriptionData);
-          console.log(subscriptionData.qrCodesLimit);
           setSubscriptionData(subscriptionData);
         }
       } catch (e: any) {
@@ -82,10 +70,10 @@ const DashboardMainContent: React.FC = () => {
       } finally {
         setLoading(false);
       }
-    };
+    }; 
     fetchStats();
-  }, []);
-
+  }, [user]);
+  
   // Prepare Nivo chart data - show all 7 days regardless of scan count
   const chartData = Object.entries(last7Days)
     .map(([date, count], index) => ({
@@ -122,7 +110,13 @@ const DashboardMainContent: React.FC = () => {
       data: chartData,
     },
   ];
-
+  if (loading) {
+    return (
+      <div className="absolute inset-0 flex flex-col items-center justify-center z-50">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#063970] mb-3"></div>
+      </div>
+    );
+  }
   return (
     <>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -134,9 +128,7 @@ const DashboardMainContent: React.FC = () => {
           </div>
           
           <div className="h-64 w-full">
-            {loading ? (
-              <div className="w-full h-full flex items-center justify-center text-gray-400">Loading...</div>
-            ) : error ? (
+            {error ? (
               <div className="w-full h-full flex items-center justify-center text-red-400">{error}</div>
             ) : nivoData[0].data.length === 0 ? (
               <div className="w-full h-full flex items-center justify-center">

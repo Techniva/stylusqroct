@@ -1,11 +1,8 @@
 import React from 'react';
-import Header from '@/app/components/layout/Header';
-import Footer from '@/app/components/layout/Footer';
 
 export default function TourismAndCityPage() {
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
-      <Header />
+    <div className="min-h-screen bg-gray-50 flex flex-col pt-16">
       <main className="flex-1">
         {/* Hero Section */}
         <section className="bg-white py-12 shadow-sm">
@@ -54,7 +51,6 @@ export default function TourismAndCityPage() {
           </div>
         </section>
       </main>
-      <Footer />
     </div>
   );
 } 

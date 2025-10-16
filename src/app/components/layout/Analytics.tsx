@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { BarChart3, TrendingUp, Users, QrCode, Calendar, Download, Eye, Smartphone } from "lucide-react";
+import LoadingSpinner from "../ui/LoadingSpinner";
 
 interface AnalyticsProps {
   totalScans: number;
@@ -198,7 +199,7 @@ const Analytics: React.FC<AnalyticsProps> = ({ totalScans, qrCodesCreated, qrCod
 
       {/* Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Scan Activity Chart */}
+       {/* Scan Activity Chart */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Scan Activity (Last 7 Days)</h3>
           <div className="h-64 relative">
@@ -207,7 +208,7 @@ const Analytics: React.FC<AnalyticsProps> = ({ totalScans, qrCodesCreated, qrCod
               Number of Scans
             </div>
             {loading ? (
-              <div className="w-full text-center text-gray-400">Loading...</div>
+             <LoadingSpinner />
             ) : last7DaysLabels.length === 0 ? (
               <div className="w-full text-center text-gray-400">No data</div>
             ) : (
@@ -223,47 +224,36 @@ const Analytics: React.FC<AnalyticsProps> = ({ totalScans, qrCodesCreated, qrCod
                     );
                   })}
                 </div>
-                
+
                 {/* Chart area */}
                 <div className="flex-1 flex flex-col relative">
-                  {/* Chart bars area */}
                   <div className="flex items-end justify-between gap-2 relative" style={{ height: '232px' }}>
-                    {/* Y-axis line */}
-                    <div className="absolute left-0 top-0 bottom-0 w-px bg-gray-300"></div>
-                   {/* Y-axis line */}
-                   <div className="absolute right-0 top-0 bottom-0 w-px bg-gray-300"></div>
-                    
-                    {/* Y-axis grid lines - only at 0 and 5 */}
-                    <div className="absolute inset-0 flex flex-col justify-between">
-                      {/* Grid line at 0 (bottom) */}
-                      <div className="border-t border-gray-300" style={{ height: '1px' }}></div>
-                      {/* Grid line at 5 (top) */}
-                      <div className="border-t border-gray-300" style={{ height: '1px' }}></div>
-                    </div>
-                    
                     {/* Bars */}
-                    {last7DaysLabels.map((label, index) => (
-                      <div key={label} className="flex-1 flex flex-col items-center relative z-10 group">
-                        <div
-                          className="w-full bg-gradient-to-t from-blue-500 to-blue-300 rounded-t cursor-pointer transition-all duration-200 hover:from-blue-600 hover:to-blue-400"
-                          style={{ height: `${(last7DaysData[index] / yAxisMax) * 232}px` }}
-                ></div>
-                        
-                        {/* Hover tooltip */}
-                        <div className="absolute bottom-full mb-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-20">
-                          {last7DaysData[index]} scans
-                          <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
+                    {last7DaysLabels.map((label, index) => {
+                      const barHeight = Math.max((last7DaysData[index] / yAxisMax) * 232, 4); // min 4px for visibility
+                      return (
+                        <div key={label} className="flex-1 flex flex-col items-center relative group">
+                          <div
+                            className="w-full bg-gradient-to-t from-blue-500 to-blue-300 rounded-t cursor-pointer transition-all duration-200 hover:from-blue-600 hover:to-blue-400"
+                            style={{ height: `${barHeight}px` }}
+                          ></div>
+
+                          {/* Tooltip */}
+                          <div className="absolute bottom-full mb-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-20">
+                            {last7DaysData[index]} scans
+                            <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
-                  
-                  {/* X-axis labels positioned at the 0 Y-level line */}
+
+                  {/* X-axis labels */}
                   <div className="flex justify-between gap-2 mt-2">
-                    {last7DaysLabels.map((label, index) => (
+                    {last7DaysLabels.map((label) => (
                       <span key={label} className="text-xs text-gray-500 font-medium flex-1 text-center">
-                  {label.slice(5)}
-                </span>
+                        {label.slice(5)} {/* MM-DD format */}
+                      </span>
                     ))}
                   </div>
                 </div>
@@ -273,11 +263,11 @@ const Analytics: React.FC<AnalyticsProps> = ({ totalScans, qrCodesCreated, qrCod
         </div>
 
         {/* Yearly (Last 6 Months) Chart */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 relative">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Yearly (Last 6 Months)</h3>
-          <div className="flex flex-col items-center">
-            {loading ? (
-              <div className="w-full text-center text-gray-400">Loading...</div>
+          <div className="flex flex-col items-center h-full">
+            {loading ? ( 
+              <LoadingSpinner />                     
             ) : last6MonthsLabels.length === 0 ? (
               <div className="w-full text-center text-gray-400">No data</div>
             ) : (

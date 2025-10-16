@@ -38,20 +38,22 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     const formData = await request.formData();
     const file = formData.get('image');
     const processedLogoPath = formData.get('processedLogoPath') as string;
-    const backgroundPath = formData.get('backgroundPath') as string; // NEW
+    const backgroundPath = formData.get('backgroundPath') as string;
 
     if (!file || typeof file !== 'object' || !('arrayBuffer' in file)) {
       return NextResponse.json({ error: 'No image file uploaded' }, { status: 400 });
     }
 
-    // Find the QR code
+    // Find the QR code (include qrData to check type)
     const qrCode = await prisma.qRCode.findUnique({
       where: { id },
-      select: { userId: true, uniqueCode: true },
+      select: { userId: true, uniqueCode: true, qrData: true },
     });
     if (!qrCode) {
       return NextResponse.json({ error: 'QR code not found' }, { status: 404 });
     }
+
+    const qrType = (qrCode.qrData as any)?.type;
 
     // Save base QR image
     const userFolder = qrCode.userId ? String(qrCode.userId) : 'guest';
@@ -97,7 +99,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       }
     }
 
-    // Save metadata (background info stored here only)
+    // Save metadata
     const metadata = {
       id,
       userId: qrCode.userId,
@@ -112,7 +114,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     const metadataPath = path.join(imageDir, 'metadata.json');
     fs.writeFileSync(metadataPath, JSON.stringify(metadata, null, 2));
 
-    // Update only image & logo in DB (no background saved)
+    // Update QRCode always
     const updatedQR = await prisma.qRCode.update({
       where: { id },
       data: {
@@ -138,6 +140,20 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
         userId: true,
       },
     });
+
+    // ✅ Only update DigitalBusinessCard if type = businesscard
+    if (qrType === 'businesscard' && qrCode.userId) {
+      await prisma.digitalBusinessCard.upsert({
+        where: { uniqueCode: qrCode.uniqueCode },
+        update: { qrCodePath: imagePath },
+        create: {
+          userId: qrCode.userId,
+          uniqueCode: qrCode.uniqueCode,
+          qrCodePath: imagePath,
+          name: "", // you can pull from qrData if needed
+        },
+      });
+    }
 
     const origin = request.headers.get('origin') || '';
     const serverLink = `${origin}/api/qr/dynamic/${updatedQR.uniqueCode}`;

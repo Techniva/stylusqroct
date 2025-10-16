@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { CreditCard, Check, AlertCircle } from "lucide-react";
+import LoadingSpinner from "../ui/LoadingSpinner";
 
 interface SubscriptionData {
   planName: string;
@@ -22,8 +23,6 @@ interface SubscriptionData {
   features: string;
   } | null;
 }
-
-
 
 const MyPlan: React.FC = () => {
   const [subscriptionData, setSubscriptionData] = useState<SubscriptionData | null>(null);
@@ -69,9 +68,7 @@ const MyPlan: React.FC = () => {
           <CreditCard className="w-8 h-8 text-[#063970]" />
           <h1 className="text-2xl font-bold text-gray-900">My Plan</h1>
         </div>
-        <div className="flex justify-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-[#063970]"></div>
-        </div>
+        <LoadingSpinner />
       </div>
     );
   }

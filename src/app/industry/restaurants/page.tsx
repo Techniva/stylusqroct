@@ -2,18 +2,17 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import Header from '@/app/components/layout/Header';
-import Footer from '@/app/components/layout/Footer';
 import AuthModal from "@/app/components/auth/AuthModal";
+import LoginCheckModal from "@/app/components/auth/LoginCheckModal"; // adjust path
 import Breadcrumbs from "@/app/components/ui/Breadcrumbs";
 import HeroMotionCard from '@/app/components/ui/HeroMotionCard';
 
 export default function RestaurantsPage() {
-
   const router = useRouter();
   const [user, setUser] = useState<any>(null);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [authMode, setAuthMode] = useState<"login" | "register">("register");
+  const [showLoginCheckModal, setShowLoginCheckModal] = useState(false);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -42,14 +41,12 @@ export default function RestaurantsPage() {
     if (user) {
       router.push("/dashboard");
     } else {
-      setAuthMode("login");
-      setShowAuthModal(true);
+      setShowLoginCheckModal(true);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
-      <Header />
+    <div className="min-h-screen bg-gray-50 flex flex-col pt-16">    
       <main className="flex-1">
         {/* Breadcrumbs */}
         <div className="max-w-6xl mx-auto px-6 mt-4">
@@ -224,9 +221,28 @@ export default function RestaurantsPage() {
         </section>
 
       </main>
-      <Footer />
     
-      {/* Auth Modal */}
+      {/* --------------------------
+          Login Check Modal
+      -------------------------- */}
+      <LoginCheckModal
+        isOpen={showLoginCheckModal}
+        onClose={() => setShowLoginCheckModal(false)}
+        onLogin={() => {
+          setShowLoginCheckModal(false);
+          setAuthMode("login");
+          setShowAuthModal(true);
+        }}
+        onRegister={() => {
+          setShowLoginCheckModal(false);
+          setAuthMode("register");
+          setShowAuthModal(true);
+        }}
+      />
+
+      {/* --------------------------
+          Auth Modal
+      -------------------------- */}
       <AuthModal
         isOpen={showAuthModal}
         onClose={() => setShowAuthModal(false)}

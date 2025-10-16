@@ -1,74 +1,158 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useCallback } from "react";
 import { Upload } from "lucide-react";
+import Cropper from "react-easy-crop";
+import Slider from "rc-slider";
+import "rc-slider/assets/index.css";
+
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 type DisplaySettingsProps = {
   primaryColor: string;
   setPrimaryColor: (color: string) => void;
   secondaryColor: string;
   setSecondaryColor: (color: string) => void;
+  uniqueCode: string;
+  // ✅ Add these new props
+  profileUrl: string | null;
+  setProfileUrl: React.Dispatch<React.SetStateAction<string | null>>;
+  coverUrl: string | null;
+  setCoverUrl: React.Dispatch<React.SetStateAction<string | null>>;
+  logoUrl: string | null;
+  setLogoUrl: React.Dispatch<React.SetStateAction<string | null>>;
 };
+
+// ✅ Utility: crop image with exact pixels
+async function getCroppedImage(
+  file: File,
+  croppedAreaPixels: { x: number; y: number; width: number; height: number }
+) {
+  const image = await new Promise<HTMLImageElement>((resolve, reject) => {
+    const img = new Image();
+    img.src = URL.createObjectURL(file);
+    img.onload = () => resolve(img);
+    img.onerror = reject;
+  });
+
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d")!;
+
+  canvas.width = croppedAreaPixels.width;
+  canvas.height = croppedAreaPixels.height;
+
+  ctx.drawImage(
+    image,
+    croppedAreaPixels.x,
+    croppedAreaPixels.y,
+    croppedAreaPixels.width,
+    croppedAreaPixels.height,
+    0,
+    0,
+    croppedAreaPixels.width,
+    croppedAreaPixels.height
+  );
+
+  return new Promise<Blob | null>((resolve) => {
+    canvas.toBlob((blob) => resolve(blob), "image/jpeg", 0.9); // ✅ JPEG, matches backend
+  });
+}
 
 export default function DisplaySettings({
   primaryColor,
   setPrimaryColor,
   secondaryColor,
   setSecondaryColor,
+  uniqueCode,
+  profileUrl,
+  setProfileUrl,
+  coverUrl,
+  setCoverUrl,
+  logoUrl,
+  setLogoUrl,
 }: DisplaySettingsProps) {
-  const [profilePhoto, setProfilePhoto] = useState<File | null>(null);
-  const [coverPhoto, setCoverPhoto] = useState<File | null>(null);
-  const [companyLogo, setCompanyLogo] = useState<File | null>(null);
-
-  const [profileUrl, setProfileUrl] = useState<string | null>(null);
-  const [coverUrl, setCoverUrl] = useState<string | null>(null);
-  const [logoUrl, setLogoUrl] = useState<string | null>(null);
-
-  console.log(primaryColor); // Debugging line
-  console.log(secondaryColor); // Debugging line
   
-  // Helper function to create a preview URL for images
-  const makePreview = (file: File | null, setter: (url: string | null) => void) => {
-    if (file) {
-      const url = URL.createObjectURL(file);
-      setter(url);
-      return () => URL.revokeObjectURL(url);
-    } else {
-      setter(null);
-    }
+  // Modal state
+  const [open, setOpen] = useState(false);
+  const [file, setFile] = useState<File | null>(null);
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files || !e.target.files[0]) return;
+    setFile(e.target.files[0]);
   };
 
-  useEffect(() => {
-    return makePreview(profilePhoto, setProfileUrl);
-  }, [profilePhoto]);
+  const handleCropComplete = useCallback((_: any, areaPixels: any) => {
+    setCroppedAreaPixels(areaPixels);
+  }, []);
 
-  useEffect(() => {
-    return makePreview(coverPhoto, setCoverUrl);
-  }, [coverPhoto]);
+  const handleUpload = async () => {
+    if (!file || !croppedAreaPixels) return;
 
-  useEffect(() => {
-    return makePreview(companyLogo, setLogoUrl);
-  }, [companyLogo]);
+    const blob = await getCroppedImage(file, croppedAreaPixels);
+    if (!blob) return;
 
-  const handleFileChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    setter: (file: File | null) => void
-  ) => {
-    if (e.target.files && e.target.files[0]) setter(e.target.files[0]);
+    const formData = new FormData();
+    formData.append("file", new File([blob], "profile.jpg", { type: "image/jpeg" }));
+    formData.append("uniqueCode", uniqueCode);
+
+    try {
+      const res = await fetch("/api/digital-business-cards/upload", {
+        method: "POST",
+        body: formData,
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setProfileUrl(data.url);
+        setOpen(false);
+        setFile(null);
+        setZoom(1);
+        setCrop({ x: 0, y: 0 });
+        setCroppedAreaPixels(null);
+      } else {
+        alert(data.error || "Upload failed");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Upload failed");
+    }
   };
 
   return (
     <div className="bg-white/80 text-xs">
-      {/* Wrap all sections in a single row */}
-      <div className="flex gap-6 flex-wrap ">
-        {/* Upload Images */}
+      <div className="flex flex-wrap gap-6">
+        {/* Column 1: Upload Images */}
         <div className="flex-1 min-w-[200px]">
           <h3 className="font-medium text-[#021B35] mb-2">Images</h3>
           <div className="flex gap-3 flex-wrap">
+            {/* Profile (opens modal) */}
+            <div
+              className="h-16 w-16 rounded-full flex flex-col items-center justify-center cursor-pointer hover:scale-105 transition overflow-hidden shadow border bg-gray-50"
+              onClick={() => setOpen(true)}
+            >
+              {profileUrl ? (
+                <img src={profileUrl} alt="Profile" className="w-full h-full object-cover" />
+              ) : (
+                <div className="flex flex-col items-center text-gray-600 text-[10px]">
+                  <Upload className="w-4 h-4 mb-0.5 text-[#021B35]" />
+                  Profile
+                </div>
+              )}
+            </div>
+
+            {/* Cover and Logo */}
             {[
-              { label: "Profile", setter: setProfilePhoto, url: profileUrl, shape: "rounded-full" },
-              { label: "Cover", setter: setCoverPhoto, url: coverUrl, shape: "rounded-full" },
-              { label: "Logo", setter: setCompanyLogo, url: logoUrl, shape: "rounded-full" },
+              { label: "Cover", setter: setCoverUrl, url: coverUrl, shape: "rounded" },
+              { label: "Logo", setter: setLogoUrl, url: logoUrl, shape: "rounded" },
             ].map((item) => (
               <label
                 key={item.label}
@@ -85,7 +169,19 @@ export default function DisplaySettings({
                 <input
                   type="file"
                   accept="image/*"
-                  onChange={(e) => handleFileChange(e, item.setter)}
+                  onChange={async (e) => {
+                    if (!e.target.files || !e.target.files[0]) return;
+                    const f = e.target.files[0];
+                    const formData = new FormData();
+                    formData.append("file", f);
+                    formData.append("uniqueCode", uniqueCode); // ✅ now included
+                    const res = await fetch("/api/digital-business-cards/upload", {
+                      method: "POST",
+                      body: formData,
+                    });
+                    const data = await res.json();
+                    if (data.url) item.setter(data.url);
+                  }}
                   className="hidden"
                 />
               </label>
@@ -93,7 +189,7 @@ export default function DisplaySettings({
           </div>
         </div>
 
-        {/* Theme Colors */}
+        {/* Column 2: Theme Presets */}
         <div className="flex-1 min-w-[200px]">
           <h3 className="font-medium text-[#021B35] mb-2">Theme</h3>
           <div className="flex gap-3 flex-wrap">
@@ -121,10 +217,11 @@ export default function DisplaySettings({
           </div>
         </div>
 
-        {/* Primary & Secondary Colors */}
+        {/* Column 3: Custom Colors */}
         <div className="flex-1 min-w-[200px]">
-          <h3 className="font-medium text-[#021B35] mb-2">Colors</h3>
-          <div className="grid grid-cols-2 gap-4">
+          <h3 className="font-medium text-[#021B35] mb-2">Custom Colors</h3>
+          <div className="flex flex-wrap gap-4">
+            {/* Primary */}
             <div className="flex flex-col gap-1">
               <span className="text-[#021B35] font-medium text-[11px]">Primary</span>
               <div className="flex items-center gap-2">
@@ -143,6 +240,7 @@ export default function DisplaySettings({
               </div>
             </div>
 
+            {/* Secondary */}
             <div className="flex flex-col gap-1">
               <span className="text-[#021B35] font-medium text-[11px]">Secondary</span>
               <div className="flex items-center gap-2">
@@ -163,6 +261,51 @@ export default function DisplaySettings({
           </div>
         </div>
       </div>
+
+      {/* Responsive Profile Modal */}
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent className="w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-md p-4 sm:p-5">
+          <DialogHeader>
+            <DialogTitle>Upload Profile Photo</DialogTitle>
+          </DialogHeader>
+
+          <input type="file" accept="image/*" onChange={handleFileSelect} className="mb-3" />
+
+          {file && (
+            <div className="relative w-full h-52 sm:h-60 md:h-64 lg:h-72 bg-gray-100 rounded overflow-hidden">
+              <Cropper
+                image={URL.createObjectURL(file)}
+                crop={crop}
+                zoom={zoom}
+                aspect={1}
+                onCropChange={setCrop}
+                onZoomChange={setZoom}
+                onCropComplete={handleCropComplete}
+              />
+            </div>
+          )}
+
+          {file && (
+            <div className="mt-2">
+              <span className="text-xs text-gray-600">Zoom</span>
+              <Slider
+                min={0.5}
+                max={2}
+                step={0.01}
+                value={zoom}
+                onChange={(value) => typeof value === "number" && setZoom(value)}
+              />
+            </div>
+          )}
+
+          <DialogFooter className="mt-4 flex justify-end gap-2">
+            <Button onClick={() => setOpen(false)}>Cancel</Button>
+            <Button onClick={handleUpload} disabled={!file}>
+              Upload
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

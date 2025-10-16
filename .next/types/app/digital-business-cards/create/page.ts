@@ -1,4 +1,4 @@
-// File: /Users/sunilkumarprajapati/Downloads/python/stylusqr1/src/app/digital-business-cards/create/page.tsx
+// File: /Users/sunilkumarprajapati/Downloads/python/stylusqr/src/app/digital-business-cards/create/page.tsx
 import * as entry from '../../../../../src/app/digital-business-cards/create/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 

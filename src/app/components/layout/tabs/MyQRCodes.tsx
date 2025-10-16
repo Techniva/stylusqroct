@@ -1,9 +1,12 @@
+"use client";
 import React, { useState, useEffect, useRef } from "react";
 import { RefreshCw, Lock, QrCode, Edit3, Download, ExternalLink, Trash2, BarChart2 } from "lucide-react";
 import { formatQRDataToURL } from '../../../lib/qrDataUtils';
 import { PDFDownloadLink } from '@react-pdf/renderer';
 import MyQRReportPDF from './QRReportPDF';
 import QrStatusToggle from './QrStatusToggle';
+import router from "next/router";
+import { useRouter } from "next/navigation";
 
 interface UserData {
   id: number;
@@ -102,8 +105,8 @@ const MyQRCodes: React.FC<MyQRCodesProps> = ({ url, user = null, onStatsChange }
   const paginatedQRCodes = qrCodes.slice((currentPage - 1) * QR_CODES_PER_PAGE, currentPage * QR_CODES_PER_PAGE);
   // Add state for DBC loading
   const [isDBCLoading, setIsDBCLoading] = useState(false);
-  const [dbcError, setDBCError] = useState<string | null>(null);
-
+  const router = useRouter(); // ✅ inside component
+  
   useEffect(() => {
     // Reset to first page if QR codes change and current page is out of range
     if (currentPage > totalPages) {
@@ -127,18 +130,22 @@ const MyQRCodes: React.FC<MyQRCodesProps> = ({ url, user = null, onStatsChange }
 
   // Handle save edit
   const handleSaveEdit = async (qr: QRCode) => {
+    if (!qr) return;
     setIsSaving(true);
+    setMessage("");
+  
     try {
-      // Determine the QR type from the current QR data
+      // Determine QR type
       const currentQRData = qr.qrData;
       const qrType = currentQRData?.type || 'website';
-      
-      // Create the new QR data
+  
+      // Create new QR data object
       const newQRData = {
         type: qrType,
         url: editUrl
       };
-      
+  
+      // 1️⃣ Update QR code
       const response = await fetch(`/api/qr/${qr.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
@@ -151,27 +158,61 @@ const MyQRCodes: React.FC<MyQRCodesProps> = ({ url, user = null, onStatsChange }
           }
         }),
       });
-      if (response.ok) {
-        const updated = await response.json();
-        setQrCodes((prev) => prev.map((item) => item.id === qr.id ? { ...item, qrData: updated.qrData, lastLink: updated.lastLink, updateCount: updated.updateCount, updatedAt: updated.updatedAt } : item));
-        // Update stats in parent
-        if (onStatsChange) {
-          const totalScans = qrCodes.reduce((sum, item) => sum + (qrScanCounts[item.id] ?? 0), 0);
-          const totalUpdates = qrCodes.reduce((sum, item) => sum + (item.updateCount || 0), 0) + 1; // +1 for this update
-          onStatsChange({ totalScans, totalUpdates });
-        }
-        setEditingQRId(null);
-        setEditUrl("");
-        setShowModal(false);
-      } else {
+  
+      if (!response.ok) {
         const err = await response.json();
-        setMessage(err.error || 'Failed to update QR code');
+        throw new Error(err.error || 'Failed to update QR code');
       }
-    } catch (error) {
-      setMessage('Failed to update QR code');
+  
+      const updated = await response.json();
+  
+      // Update QR codes state
+      setQrCodes((prev) =>
+        prev.map((item) =>
+          item.id === qr.id
+            ? { ...item, qrData: updated.qrData, lastLink: updated.lastLink, updateCount: updated.updateCount, updatedAt: updated.updatedAt }
+            : item
+        )
+      );
+  
+      // 2️⃣ If it's a Digital Business Card, store uniqueCode
+      if (qrType === 'businesscard' && user?.id) {
+        try {
+          const dbcRes = await fetch('/api/digital-business-cards/store-unique-code', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              userId: user.id,
+              uniqueCode: updated.qrData.uniqueCode,
+            }),
+          });
+  
+          if (!dbcRes.ok) {
+            console.warn('Failed to store uniqueCode in Digital Business Card table');
+          }
+        } catch (err) {
+          console.error('Error storing uniqueCode:', err);
+        }
+      }
+  
+      // Update stats in parent
+      if (onStatsChange) {
+        const totalScans = qrCodes.reduce((sum, item) => sum + (qrScanCounts[item.id] ?? 0), 0);
+        const totalUpdates = qrCodes.reduce((sum, item) => sum + (item.updateCount || 0), 0) + 1;
+        onStatsChange({ totalScans, totalUpdates });
+      }
+  
+      setEditingQRId(null);
+      setEditUrl("");
+      setShowModal(false);
+  
+    } catch (error: any) {
+      setMessage(error.message || 'Failed to update QR code');
     }
+  
     setIsSaving(false);
   };
+  
 
   // Download QR image
   const handleDownload = async (qr: QRCode) => {
@@ -450,7 +491,7 @@ const MyQRCodes: React.FC<MyQRCodesProps> = ({ url, user = null, onStatsChange }
   }, [openAnalyticsId]);
 
   // ... (rest of the render logic, unchanged)
-
+  
   return (
     <div className="bg-white rounded-xl shadow p-6 space-y-6">
       {/* Header */}
@@ -877,7 +918,7 @@ const MyQRCodes: React.FC<MyQRCodesProps> = ({ url, user = null, onStatsChange }
         )}
         {/* Delete Confirmation Modal (must be inside main return) */}
         {showDeleteModal && qrToDelete && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" style={{ marginTop: 0 }}>
             <div className="bg-white rounded-2xl shadow-2xl w-full max-w-xs p-6 flex flex-col items-center">
               <div className="text-lg font-semibold text-gray-800 mb-2">Delete QR Code?</div>
               <div className="text-gray-600 mb-6 text-center">Are you sure you want to delete this QR code? This action cannot be undone.</div>
@@ -900,133 +941,115 @@ const MyQRCodes: React.FC<MyQRCodesProps> = ({ url, user = null, onStatsChange }
         )}
         {/* Edit Modal */}
         {showModal && editingQRId !== null && (() => {
-  const editingQR = qrCodes.find(q => q.id === editingQRId);
-  if (editingQR && editingQR.qrData?.type === 'businesscard') {
-    return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-        <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-0">
-          <div className="rounded-t-2xl bg-[#063970]/90 px-6 pt-6 pb-4 flex items-center justify-between">
-            <h3 className="text-lg font-semibold text-white">Edit Digital Business Card</h3>
-            <button
-              className="text-white text-2xl hover:text-gray-200"
-              onClick={handleCancelEdit}
-              aria-label="Close"
-            >
-              &times;
-            </button>
-          </div>
-          <div className="p-6">
-            <div className="mb-4 text-gray-700">
-              This QR code is linked to a Digital Business Card. To edit the business card details, click below.
-            </div>
-            {dbcError && <div className="mb-2 text-red-600 text-sm">{dbcError}</div>}
-            <button
-              className="w-full bg-green-600 text-white py-3 px-4 rounded-full hover:bg-green-700 transition-colors flex items-center justify-center gap-2 mb-2"
-              disabled={isDBCLoading}
-              onClick={async () => {
-                setIsDBCLoading(true);
-                setDBCError(null);
-                try {
-                  const res = await fetch(`/api/digital-business-cards?uniqueCode=${editingQR.uniqueCode}`);
-                  if (!res.ok) throw new Error('Failed to fetch business card data');
-                  const { dbc, qr } = await res.json();
-                  sessionStorage.setItem('dbc_prefill', JSON.stringify({
-                    vcard: {
-                      name: dbc.name,
-                      title: dbc.title,
-                      company: dbc.company,
-                      about: dbc.about,
-                      pronoun: dbc.pronoun,
-                      accreditations: dbc.accreditations,
-                      phone: dbc.phone,
-                      email: dbc.email,
-                      address: dbc.address,
-                      website: dbc.website,
-                    },
-                    uniqueCode: qr.uniqueCode,
-                    dbc,
-                    qr
-                  }));
-                  window.location.href = '/digital-business-cards/create';
-                } catch (e: any) {
-                  setDBCError(e.message || 'Error loading business card');
-                } finally {
-                  setIsDBCLoading(false);
-                }
-              }}
-            >
-              {isDBCLoading ? 'Loading...' : 'Edit Business Card'}
-            </button>
-            <button
-              className="w-full bg-gray-300 text-gray-700 rounded py-2 mt-2"
-              onClick={handleCancelEdit}
-              disabled={isDBCLoading}
-            >
-              Cancel
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-  // Default: normal edit modal for other types
-  return (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-0">
-              <div className="rounded-t-2xl bg-[#063970]/90 px-6 pt-6 pb-4 flex items-center justify-between">
-                <h3 className="text-lg font-semibold text-white">Edit QR Redirect URL</h3>
-                <button
-                  className="text-white text-2xl hover:text-gray-200"
-                  onClick={handleCancelEdit}
-                  aria-label="Close"
-                >
-                  &times;
-                </button>
-              </div>
-              <div className="p-6">
-                <div className="mb-4">
-                  <label className="block text-xs font-semibold text-gray-600 mb-1">Active URL</label>
-                  <div className="w-full px-3 py-2 rounded bg-gray-50 text-green-700 font-semibold text-sm break-all border border-gray-200 cursor-not-allowed select-all">
-              {editingQR ? formatQRDataToURL(editingQR.qrData) : ''}
+          const editingQR = qrCodes.find(q => q.id === editingQRId);
+          if (!editingQR) return null;
+
+          // Business Card Modal
+          if (editingQR.qrData?.type === "businesscard") {
+            return (
+              <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" style={{ marginTop: 0 }}>
+                <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md">
+                  {/* Header */}
+                  <div className="rounded-t-2xl bg-[#063970]/90 px-6 pt-6 pb-4 flex items-center justify-between">
+                    <h3 className="text-lg font-semibold text-white">Edit Digital Business Card</h3>
+                    <button
+                      onClick={handleCancelEdit}
+                      className="text-white text-2xl hover:text-gray-200"
+                      aria-label="Close"
+                    >
+                      &times;
+                    </button>
+                  </div>
+
+                  {/* Body */}
+                  <div className="p-6 flex flex-col gap-4">
+                    <p className="text-gray-700 text-sm">
+                      You can edit your digital business card below.
+                    </p>
+
+                    {/* Edit Button */}
+                    <button
+                      className="w-full bg-green-600 text-white py-3 px-4 rounded-full hover:bg-green-700 transition-colors disabled:opacity-50"
+                      disabled={isDBCLoading}
+                      onClick={() =>
+                        router.push(`/digital-business-cards/create?uniqueCode=${editingQR.uniqueCode}`)
+                      }
+                    >
+                      {isDBCLoading ? "Loading..." : "Edit Business Card"}
+                    </button>
+
+                    {/* Cancel Button */}
+                    <button
+                      className="w-full bg-gray-300 text-gray-700 py-3 px-4 rounded-full hover:bg-gray-400 transition-colors"
+                      onClick={handleCancelEdit}
+                      disabled={isDBCLoading}
+                    >
+                      Cancel
+                    </button>
                   </div>
                 </div>
-                <div className="mb-4">
-                  <label className="block text-xs font-semibold text-gray-600 mb-1">New URL</label>
-                  <input
-                    type="text"
-                    className="w-full px-3 py-2 border rounded text-green-700 font-semibold bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-green-200"
-                    value={editUrl}
-                    onChange={e => setEditUrl(e.target.value)}
-                    disabled={isSaving}
-                    autoFocus
-                    placeholder="Enter New URL"
-                  />
-                </div>
-                <div className="flex justify-end gap-2">
-                  <button
-                    className="px-4 py-2 bg-[#063970] hover:bg-[#052c5c] text-white rounded disabled:opacity-50"
-              onClick={() => handleSaveEdit(editingQR!)}
-                    disabled={isSaving || !editUrl.trim()}
-                  >
-                    {isSaving ? 'Saving...' : 'Save'}
-                  </button>
-                  <button
-                    className="px-4 py-2 bg-gray-300 text-gray-700 rounded"
-                    onClick={handleCancelEdit}
-                    disabled={isSaving}
-                  >
-                    Cancel
-                  </button>
-                </div>
               </div>
-            </div>
-          </div>
-  );
-})()}
-        </>
-      )}
+            );
+          }
           
-        </div>
+        // Default: normal edit modal for other types
+        return (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" style={{ marginTop: 0 }}>
+                  <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-0">
+                    <div className="rounded-t-2xl bg-[#063970]/90 px-6 pt-6 pb-4 flex items-center justify-between">
+                      <h3 className="text-lg font-semibold text-white">Edit QR Redirect URL</h3>
+                      <button
+                        className="text-white text-2xl hover:text-gray-200"
+                        onClick={handleCancelEdit}
+                        aria-label="Close"
+                      >
+                        &times;
+                      </button>
+                    </div>
+                    <div className="p-6">
+                      <div className="mb-4">
+                        <label className="block text-xs font-semibold text-gray-600 mb-1">Active URL</label>
+                        <div className="w-full px-3 py-2 rounded bg-gray-50 text-green-700 font-semibold text-sm break-all border border-gray-200 cursor-not-allowed select-all">
+                    {editingQR ? formatQRDataToURL(editingQR.qrData) : ''}
+                        </div>
+                      </div>
+                      <div className="mb-4">
+                        <label className="block text-xs font-semibold text-gray-600 mb-1">New URL</label>
+                        <input
+                          type="text"
+                          className="w-full px-3 py-2 border rounded text-green-700 font-semibold bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-green-200"
+                          value={editUrl}
+                          onChange={e => setEditUrl(e.target.value)}
+                          disabled={isSaving}
+                          autoFocus
+                          placeholder="Enter New URL"
+                        />
+                      </div>
+                      <div className="flex justify-end gap-2">
+                        <button
+                          className="px-4 py-2 bg-[#063970] hover:bg-[#052c5c] text-white rounded disabled:opacity-50"
+                    onClick={() => handleSaveEdit(editingQR!)}
+                          disabled={isSaving || !editUrl.trim()}
+                        >
+                          {isSaving ? 'Saving...' : 'Save'}
+                        </button>
+                        <button
+                          className="px-4 py-2 bg-gray-300 text-gray-700 rounded"
+                          onClick={handleCancelEdit}
+                          disabled={isSaving}
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
+            </>
+          )}
+          
+      </div>
         
 
       )}

@@ -133,8 +133,8 @@ export default function CardPreview({
           stylus<span className="text-sky-400">QR</span>
         </h1>
 
-        <svg className="absolute bottom-0 left-0 w-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 60" preserveAspectRatio="none">
-          <path d="M0,20 C150,80 350,-40 500,20 L500,60 L0,60 Z" className="fill-white" />
+        <svg className="absolute bottom-0 left-0 w-full h-16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 60" preserveAspectRatio="none" >
+          <path d="M0,30 C150,0 350,60 500,30 L500,60 L0,60 Z" className="fill-white"/>
         </svg>
 
         <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2">
@@ -206,8 +206,8 @@ export default function CardPreview({
         
       </div>
       {/* Bottom Button */}
-      <div className="p-4 border-gray-200 flex items-center justify-center">
-      <button className="mt-auto w-full py-2 bg-[#021B35] text-white text-sm font-medium rounded-xl shadow hover:bg-[#032544] transition flex items-center justify-center space-x-2">
+      <div className="border-gray-200 flex items-center justify-center">
+        <button className="mt-auto w-full py-4 bg-[#021B35] text-white text-sm font-medium rounded-b shadow hover:bg-[#032544] transition flex items-center justify-center space-x-2">
           <UserPlus className="w-5 h-5 text-white" />
           <span>Add to Contacts</span>
         </button>

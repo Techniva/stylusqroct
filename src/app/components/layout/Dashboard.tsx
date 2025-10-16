@@ -20,7 +20,7 @@ interface UserData {
 
 const menu = [
   { label: "Overview", icon: <Grid className="w-5 h-5" /> },
-  { label: "QR Codes", icon: <QrCode className="w-5 h-5" /> },
+  { label: "My QR Codes", icon: <QrCode className="w-5 h-5" /> },
   { label: "Analytics", icon: <BarChart2 className="w-5 h-5" /> },
   { label: "My Plan", icon: <CreditCard className="w-5 h-5" /> },
   { label: "Integrations", icon: <Layers className="w-5 h-5" /> },
@@ -205,7 +205,7 @@ const Dashboard: React.FC = () => {
 
   const renderContent = () => {
     switch (activeTab) {
-      case "QR Codes":
+      case "My QR Codes":
         return <MyQRCodes url={qrSettings.url || ""} onUrlChange={url => setQrSettings({ ...qrSettings, url })} user={user} />;
       case "Create QR":
         return <QRCodePage user={user} refreshQRStats={refreshQRStats} />;
@@ -224,18 +224,16 @@ const Dashboard: React.FC = () => {
         return <Feedback />;
       case "Overview":
       default:
-        return <DashboardMainContent />;
+        return <DashboardMainContent user={user!}/>;
     }
   };
 
   // Show loading state or redirect if no user
   if (!user) {
     return (
-      <div className="h-screen bg-[#f6f6fa] flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#063970] mx-auto mb-4"></div>
-          <p className="text-gray-600">Logging out...</p>
-        </div>
+      <div className="absolute inset-0 flex flex-col items-center justify-center z-50">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#063970] mb-2"></div>
+        <span className="text-gray-700 font-medium">Logging Out...</span>
       </div>
     );
   }
