@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAuth } from "@/lib/auth"; // Your provided auth helper
-import prisma from "@/lib/prisma"; // Prisma client
+import { prisma } from "@/lib/prisma"; // Prisma client
 
 export async function POST(req: NextRequest) {
   const { user } = await getAuth(req);
